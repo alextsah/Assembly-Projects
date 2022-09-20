@@ -9,7 +9,7 @@ quotient: .word 0
 _start:
 	LDR R0,devident
 	LDR R1,devisor
-	LDR R2,result
+	LDR R2,=result
 	LDR R3,devident //R3 = reminder = devident
 	LDR R4,quotient //R4 = quotient 	
 top:
