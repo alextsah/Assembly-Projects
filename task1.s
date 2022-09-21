@@ -1,7 +1,7 @@
 .global _start              
 // initialize values
 devident: .word 10
-devisor: .word 6
+devisor: .word 2
 result: .space 4
 reminder: .word 10
 quotient: .word 0
@@ -15,7 +15,7 @@ _start:
 top:
 	CMP R3,R1
 	BGE while
-	LDR R2, [R3,R4,LSL#4]
+	STR R2, [R3,R4,LSL#4]
 	B end
 while:
 	SUB R3,R3,R1
