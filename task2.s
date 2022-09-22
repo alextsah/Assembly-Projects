@@ -9,7 +9,7 @@ _start:
 
 TOP:
 	CMP R2,R1 //R2-R1=i-n
-	BLE OUTERLOOP //if R2<R1 => i<n => i-n<0
+	BLE OUTERLOOP //if R2<R1 => i<n then branch 
 	B end
 	
 OUTERLOOP: 
@@ -22,7 +22,7 @@ OUTERLOOP:
 	B TOP
 
 INNERLOOP1:
-	SUB R5,R5,#1 //R5 = j-1
+	SUB R5,R4,#1 //R5 = j-1
 	LDR R6,[R0,R5,LSL#2] //R6=arr[j-1]
 	CMP R6,R3//R6-R3 = arr[j-1]-value
 	BGE INNERLOOP2//if arr[j-1]-value>0 => arr[j-1]>value then branch 
