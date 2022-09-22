@@ -17,8 +17,7 @@ OUTERLOOP:
 	MOV R4, R2 //R4=j=i
 	CMP R4,#0 //R4-0
 	BGE INNERLOOP1 //if R4-0>0 => R4>0 =>j>0 then branch 
-	STR R3, [R0,R2,LSL#2]// arr[j] = value 
-	ADD R2,R2,#1//i = i+1
+	STR R3, [R0,R2,LSL#2]// arr[j] = value
 	B TOP
 
 INNERLOOP1:
