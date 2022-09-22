@@ -19,7 +19,7 @@ OUTERLOOP:
 	
 	CMP R6,#0 //R6-0
 	BGT INNERLOOP1 //if R6-0>0 => R6>0 then branch 
-	//insert arr[j] = value 
+	STR R5, [R0,R6,LSL#2]//insert arr[j] = value 
 	ADD R2,R2,#1//i = i+1
 	B OUTERLOOP
 
@@ -30,7 +30,7 @@ INNERLOOP1:
 	LDR R9,[R8]//R9 = arr[j-1]
 	CMP R9,R5//R9-R5 = arr[j-1]-value
 	BGT INNERLOOP2//if arr[j-1]-value>0 => arr[j-1]>value then branch 
-	//insert arr[j] = value
+	STR R5, [R0,R6,LSL#2]//insert arr[j] = value
 	B OUTERLOOP
 	
 INNERLOOP2:
@@ -38,4 +38,4 @@ INNERLOOP2:
 	LDR R11,[R10]//R11=arr[j]
 	STR R9,[R11]//arr[j]=arr[j-1]
 	SUB R6,R6,#1//R6=R6-1 => j=j-1
-	B INNERLOOP1 
+	B INNERLOOP1  
