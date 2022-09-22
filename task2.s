@@ -27,12 +27,14 @@ INNERLOOP1:
 	CMP R6,R3//R6-R3 = arr[j-1]-value
 	BGE INNERLOOP2//if arr[j-1]-value>0 => arr[j-1]>value then branch 
 	STR R3, [R0,R2,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
 	B OUTERLOOP
 	
 INNERLOOP2:
 	LDR R7,[R0,R4,LSL#2] //R7=arr[j]
-	STR R7,[R6]//arr[j]=arr[j-1]
+	STR R7,[R0,R5,LSL#2]//arr[j]=arr[j-1]
 	SUB R4,R4,#1//R6=R6-1 => j=j-1
-	B OUTERLOOP
+	ADD R2,R2,#1//i = i+1
+	B TOP
 
 .end
