@@ -1,4 +1,4 @@
-/initialize array 
+.global _start
 arr:   .word 68, -22, -31, 75, -10, -61, 39, 92, 94, -55 // test array of 10 elements 
 
 _start:
