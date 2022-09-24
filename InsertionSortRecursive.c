@@ -1,24 +1,29 @@
 #include <stdio.h>
 
-void insertionSort(int arr[], int n)
+void insertionSortRecursive(int arr[], int n)
 {
-	for (int i = 1; i < n; i++) {
-		int value = arr[i];
-		int j = i - 1;
+	if (n <= 1)
+		return;
 
-		while (j >= 0 && arr[j] > value) {
-			arr[j + 1] = arr[j];
-			j = j - 1;
-		}
-		arr[j + 1] = value;
+	insertionSortRecursive(arr, n - 1);
+
+	int value = arr[n - 1];
+	int j = n - 2;
+
+	while (j >= 0 && arr[j] > value) {
+		arr[j + 1] = arr[j];
+		j--;
 	}
+	arr[j + 1] = value;
 }
 
 int main()
 {
-	int arr[] = {-36, 12, 58, -12};
+	int arr[] = { -13, 8, 2, -1 };
 	int n = 4;
-	insertionSort(arr, n);
+
+	insertionSortRecursive(arr, n);
+    
 	return 0;
 }
 
