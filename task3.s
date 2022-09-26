@@ -17,10 +17,9 @@ INNERLOOP2C:
 	SUB R2, R1, #1 //R2 = n-1
 	LDR R3, [R0,R2,LSL#2] //R3=value=arr[n-1]
 	SUB R4, R1,#2 //R4=j=n-2
-	
+	ADD R5,R4,#1//R5=j+1
 	CMP R4,#0 //branch if j>=0
 	BGE INNERLOOP1
-	ADD R5,R4,#1//R5=j+1
 	STR R3,[R0,R5,LSL#2]//value ->arr[j+1]
 	B OUTERLOOP
 	
