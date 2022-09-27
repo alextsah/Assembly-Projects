@@ -10,6 +10,7 @@ TOP:
 	PUSH {LR}
 	BLE OUTERLOOP// branch if n<=1
 	SUB R1,R1,#1
+	POP {LR}
 	B TOP
 	 
 OUTERLOOP:
