@@ -1,10 +1,12 @@
 .global _start
 
-arr: 	.word 69,-22,35,-10,-25,44
+arr: 	.word 69,-22,35,-10,-88,10
+n: 		.word 6
 _start:
 
 	LDR R0,=arr //R0=pointer to array 
-	MOV R1,#6 //R1=lenght of array (n)
+	LDR R1,n //R1=lenght of array (n)
+	LDR R8,n
 TOP:
 	CMP R1,#1
 	PUSH {LR}
@@ -17,7 +19,7 @@ OUTERLOOP:
 	
 INNERLOOP2C:
 	ADD R1,R1,#1
-	CMP R1,#6
+	CMP R1,R8
 	BGT end
 	SUB R2, R1, #1 //R2 = n-1
 	LDR R3, [R0,R2,LSL#2] //R3=value=arr[n-1]
