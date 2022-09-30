@@ -38,7 +38,7 @@ INNERLOOP1:
 	BGT INNERLOOP2 //branch if R6>R3 =>arr[j]>value
 	STR R3,[R0,R5,LSL#2] //value ->arr[j+1]
 	POP {R4-R8,LR}
-	BX LR
+	B INNERLOOP2C
 	
 INNERLOOP2:
 	LDR R7,[R0,R5,LSL#2] //R7 = arr[j+1]
