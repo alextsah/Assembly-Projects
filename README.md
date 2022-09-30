@@ -1,4 +1,4 @@
-# Assembly Fundamentals 
+# Assembly ARMv7 Fundamentals 
 
 This repository is for storing code for ECSE324 Computer Organization. Labs 1,2 and 3 will be stored here to enable access to code during development from any device. <br />
 To access the simulator use: http://ecse324.ece.mcgill.ca/simulator/?sys=arm-de1soc <br />
