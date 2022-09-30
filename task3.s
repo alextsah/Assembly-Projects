@@ -1,7 +1,7 @@
 .global _start
 
-arr: 	.word 69,-22,35,12,40,10,-30,77
-n: 		.word 8
+arr: 	.word 69,-22,35,12,-40,70
+n: 		.word 6
 _start:
 
 	LDR R0,=arr //R0=pointer to array 
@@ -46,7 +46,7 @@ INNERLOOP2:
 	STR R6,[R0,R5,LSL#2] //arr[j] -> arr[j+1]
 	SUB R4,R4,#1 //j=j-1
 	POP {R4-R8,LR}
-	BX LR
+	B TOP
 	
 end:
 	B end
