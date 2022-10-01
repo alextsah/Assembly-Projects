@@ -15,8 +15,11 @@ empty: .space 4
 result:	.space 100
 empty2: .space 4
 red:	.space 100 
+empty3: .space 4
 green:	.space 100
+empty4: .space 4
 blue: 	.space 100
+empty5: .space 4
 alpha: 	.space 100
 
 _start:
@@ -31,7 +34,7 @@ _start:
 top:
 	ADD R2,R2,#1
 	CMP R2,#5
-	BGE populateArrays
+	BGE populateRed
 	MOV R3,#0
 	ADD R7,R7,R6
 innerloop:
@@ -44,6 +47,63 @@ innerloop:
 	ADD R3,R3,#1
 	B innerloop
 
-populateArrays:
-	LDR 
+populateRed:
 	
+	LDR R4,=result
+	LDR R5,=red
+	MOV R2,#0
+top2:
+	CMP R2,#25
+	BGE populateGreen
+	LDR R3, [R4,R2,LSL#2]
+	LSR R3,#24
+	STR R3, [R5,R2,LSL#2]
+	ADD R2,R2,#1
+	B top2
+	
+populateGreen:
+	LDR R4,=result
+	LDR R5,=green
+	MOV R2,#0
+top3:
+	CMP R2,#25
+	BGE populateBlue
+	LDR R3, [R4,R2,LSL#2]
+	LSR R3,#16
+	STR R3, [R5,R2,LSL#2]
+	LDRB R6,[R5,R2,LSL#2]
+	STR R6, [R5,R2,LSL#2]
+	ADD R2,R2,#1
+	B top3
+	
+populateBlue:
+	LDR R4,=result
+	LDR R5,=blue
+	MOV R2,#0
+top4:
+	CMP R2,#25
+	BGE populateAlpha
+	LDR R3, [R4,R2,LSL#2]
+	LSR R3,#8
+	STR R3, [R5,R2,LSL#2]
+	LDRB R6,[R5,R2,LSL#2]
+	STR R6, [R5,R2,LSL#2]
+	ADD R2,R2,#1
+	B top4
+	
+populateAlpha:
+	LDR R4,=result
+	LDR R5,=alpha
+	MOV R2,#0
+top5:
+	CMP R2,#25
+	BGE end
+	LDR R3, [R4,R2,LSL#2]
+	LSR R3,#0
+	STR R3, [R5,R2,LSL#2]
+	LDRB R6,[R5,R2,LSL#2]
+	STR R6, [R5,R2,LSL#2]
+	ADD R2,R2,#1
+	B top5
+
+end: .end
