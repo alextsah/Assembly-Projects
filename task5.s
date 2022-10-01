@@ -48,7 +48,6 @@ innerloop:
 	B innerloop
 
 populateRed:
-	
 	LDR R4,=result
 	LDR R5,=red
 	MOV R2,#0
@@ -97,7 +96,7 @@ populateAlpha:
 	MOV R2,#0
 top5:
 	CMP R2,#25
-	BGE end
+	BGE sortRed
 	LDR R3, [R4,R2,LSL#2]
 	LSR R3,#0
 	STR R3, [R5,R2,LSL#2]
@@ -106,4 +105,135 @@ top5:
 	ADD R2,R2,#1
 	B top5
 
+sortRed:
+	LDR R0,=red //pointer to array a.k.a base address of array 
+	MOV R1,#25 //length of array (n)
+	MOV R2,#1 //index i=1
+TOPRED:
+	CMP R2,R1 //R2-R1=i-n
+	BLT OUTERLOOPRED //if R2<R1 => i<n then branch 
+	B sortGreen
+OUTERLOOPRED: 
+	LDR R3,[R0,R2,LSL#2] //R3=value=arr[i]
+	MOV R4, R2 //R4=j=i
+INNERLOOP2CRED:
+	CMP R4,#0 //R4-0
+	BGT INNERLOOP1RED //if R4-0>0 => R4>0 =>j>0 then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPRED
+INNERLOOP1RED:
+	SUB R5,R4,#1 //R5 = j-1
+	LDR R6,[R0,R5,LSL#2] //R6=arr[j-1]
+	CMP R6,R3//R6-R3 = arr[j-1]-value
+	BGT INNERLOOP2RED//if arr[j-1]-value>0 => arr[j-1]>value then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPRED
+INNERLOOP2RED:
+	STR R6,[R0,R4,LSL#2]//arr[j]=arr[j-1]
+	MOV R7,R3
+	STR R7,[R0,R5,LSL#2]
+	SUB R4,R4,#1//R6=R6-1 => j=j-1
+	B INNERLOOP2CRED
+
+sortGreen:
+	LDR R0,=green //pointer to array a.k.a base address of array 
+	MOV R1,#25 //length of array (n)
+	MOV R2,#1 //index i=1
+TOPGREEN:
+	CMP R2,R1 //R2-R1=i-n
+	BLT OUTERLOOPGREEN //if R2<R1 => i<n then branch 
+	B sortBlue
+OUTERLOOPGREEN: 
+	LDR R3,[R0,R2,LSL#2] //R3=value=arr[i]
+	MOV R4, R2 //R4=j=i
+INNERLOOP2CGREEN:
+	CMP R4,#0 //R4-0
+	BGT INNERLOOP1GREEN //if R4-0>0 => R4>0 =>j>0 then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPGREEN
+INNERLOOP1GREEN:
+	SUB R5,R4,#1 //R5 = j-1
+	LDR R6,[R0,R5,LSL#2] //R6=arr[j-1]
+	CMP R6,R3//R6-R3 = arr[j-1]-value
+	BGT INNERLOOP2GREEN//if arr[j-1]-value>0 => arr[j-1]>value then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPGREEN
+INNERLOOP2GREEN:
+	STR R6,[R0,R4,LSL#2]//arr[j]=arr[j-1]
+	MOV R7,R3
+	STR R7,[R0,R5,LSL#2]
+	SUB R4,R4,#1//R6=R6-1 => j=j-1
+	B INNERLOOP2CGREEN
+	
+sortBlue:
+	LDR R0,=blue //pointer to array a.k.a base address of array 
+	MOV R1,#25 //length of array (n)
+	MOV R2,#1 //index i=1
+TOPBLUE:
+	CMP R2,R1 //R2-R1=i-n
+	BLT OUTERLOOPBLUE //if R2<R1 => i<n then branch 
+	B sortAlpha
+OUTERLOOPBLUE: 
+	LDR R3,[R0,R2,LSL#2] //R3=value=arr[i]
+	MOV R4, R2 //R4=j=i
+INNERLOOP2CBLUE:
+	CMP R4,#0 //R4-0
+	BGT INNERLOOP1BLUE //if R4-0>0 => R4>0 =>j>0 then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPBLUE
+INNERLOOP1BLUE:
+	SUB R5,R4,#1 //R5 = j-1
+	LDR R6,[R0,R5,LSL#2] //R6=arr[j-1]
+	CMP R6,R3//R6-R3 = arr[j-1]-value
+	BGT INNERLOOP2BLUE//if arr[j-1]-value>0 => arr[j-1]>value then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPBLUE
+INNERLOOP2BLUE:
+	STR R6,[R0,R4,LSL#2]//arr[j]=arr[j-1]
+	MOV R7,R3
+	STR R7,[R0,R5,LSL#2]
+	SUB R4,R4,#1//R6=R6-1 => j=j-1
+	B INNERLOOP2CBLUE
+	
+sortAlpha:
+	LDR R0,=alpha //pointer to array a.k.a base address of array 
+	MOV R1,#25 //length of array (n)
+	MOV R2,#1 //index i=1
+TOPALPHA:
+	CMP R2,R1 //R2-R1=i-n
+	BLT OUTERLOOPALPHA //if R2<R1 => i<n then branch 
+	B getResult
+OUTERLOOPALPHA: 
+	LDR R3,[R0,R2,LSL#2] //R3=value=arr[i]
+	MOV R4, R2 //R4=j=i
+INNERLOOP2CALPHA:
+	CMP R4,#0 //R4-0
+	BGT INNERLOOP1ALPHA //if R4-0>0 => R4>0 =>j>0 then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPALPHA
+INNERLOOP1ALPHA:
+	SUB R5,R4,#1 //R5 = j-1
+	LDR R6,[R0,R5,LSL#2] //R6=arr[j-1]
+	CMP R6,R3//R6-R3 = arr[j-1]-value
+	BGT INNERLOOP2ALPHA//if arr[j-1]-value>0 => arr[j-1]>value then branch 
+	STR R3, [R0,R4,LSL#2]// arr[j] = value
+	ADD R2,R2,#1//i = i+1
+	B TOPALPHA
+INNERLOOP2ALPHA:
+	STR R6,[R0,R4,LSL#2]//arr[j]=arr[j-1]
+	MOV R7,R3
+	STR R7,[R0,R5,LSL#2]
+	SUB R4,R4,#1//R6=R6-1 => j=j-1
+	B INNERLOOP2CALPHA
+	
+getResult:
+	B end
+	
 end: .end
