@@ -21,6 +21,7 @@ empty4: .space 4
 blue: 	.space 100
 empty5: .space 4
 alpha: 	.space 100
+output_image: 	.space 100
 
 _start:
 	LDR R1,=input_image
@@ -250,5 +251,12 @@ getResult:
 	ADD R6,R6,R7
 	ADD R6,R6,R8
 	ADD R6,R6,R9 //result 
+	B updateOutput
+	
+updateOutput:
+	LDR R1,=output_image
+	STR R6, [R1,R10,LSL#2]
+	ADD R6,R6,#1
+	ADD R11,R11,#1
 	B end 
 end: .end
