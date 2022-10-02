@@ -234,6 +234,21 @@ INNERLOOP2ALPHA:
 	B INNERLOOP2CALPHA
 	
 getResult:
-	B end
-	
+	LDR R1,=red
+	LDR R2,=green
+	LDR R3,=blue
+	LDR R4,=alpha
+	MOV R5,#12 //median is 12th 
+	LDR R6,[R1,R5,LSL#2] //median red
+	LSL R6, #24
+	LDR R7,[R2,R5,LSL#2] //median green
+	LSL R7, #16
+	LDR R8,[R3,R5,LSL#2] //median blue
+	LSL R8, #8
+	LDR R9,[R4,R5,LSL#2] //median alpha
+	LSL R9, #0
+	ADD R6,R6,R7
+	ADD R6,R6,R8
+	ADD R6,R6,R9 //result 
+	B end 
 end: .end
