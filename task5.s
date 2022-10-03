@@ -22,7 +22,7 @@ blue: 	.space 100
 empty5: .space 4
 alpha: 	.space 100
 empty6:	.space 4
-output_image: 	.space 100
+output_image: 	.space 144
 empty7:	.space 4
 
 _start:
@@ -38,7 +38,7 @@ _start:
 	LDR R4,=result 
 	B innerloop
 BEG:
-	CMP R10,#5
+	CMP R10,#35
 	BGT end
 	LDR R1,=input_image
 	MOV R2, #0 //R2=j
@@ -275,5 +275,18 @@ updateOutput:
 	STR R6, [R1,R10,LSL#2]
 	ADD R10,R10,#1
 	ADD R11,R11,#1
+	CMP R12,#6
+	BEQ increment
+	CMP R12,#16
+	BEQ increment 
+	CMP R12,#26
+	BEQ increment 
+	CMP R12,#36
+	BEQ increment 
+	CMP R12,#46
+	BEQ increment
+	B BEG
+increment: 
+	ADD R12,R12,#4
 	B BEG
 end: .end
