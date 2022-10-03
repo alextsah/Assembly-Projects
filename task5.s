@@ -23,45 +23,49 @@ empty5: .space 4
 alpha: 	.space 100
 empty6:	.space 4
 output_image: 	.space 100
+empty7:	.space 4
 
 _start:
-	MOV R10,#0
-	MOV R11,#0
-	MOV R12,#0 //increment this by 1 to get next window
+	MOV R10,#0 //result array index 
+	MOV R11,#0 //median filter index
+	MOV R12,#0 
 	LDR R1,=input_image
 	MOV R2, #0 //R2=j
 	MOV R3, #0 //R3=i
 	MOV R6,#5 
-	MOV R7,#0
+	MOV R7,#0  
 	MOV R8,#0
 	LDR R4,=result 
 	B innerloop
 BEG:
-	CMP R11,#2
+	CMP R10,#5
 	BGT end
 	LDR R1,=input_image
 	MOV R2, #0 //R2=j
 	MOV R3, #0 //R3=i
 	MOV R6,#5 
 	MOV R8,#0
-	LDR R4,=result 
+	LDR R4,=result
+	MOV R11,R12
+	B innerloop
 top:
 	ADD R2,R2,#1
 	CMP R2,#5
 	BGE populateRed
 	MOV R3,#0
-	ADD R7,R7,R6
+	ADD R11,R11,R6
 innerloop:
 	CMP R3,#4
 	BGT top
-	LDR R5,[R1,R7,LSL#2]
+	LDR R5,[R1,R11,LSL#2]
 	STR R5,[R4,R8,LSL#2]
 	ADD R8,R8,#1
-	ADD R7,R7,#1
+	ADD R11,R11,#1
 	ADD R3,R3,#1
 	B innerloop
 
 populateRed:
+	ADD R12,R12,#1
 	LDR R4,=result
 	LDR R5,=red
 	MOV R2,#0
@@ -271,6 +275,5 @@ updateOutput:
 	STR R6, [R1,R10,LSL#2]
 	ADD R10,R10,#1
 	ADD R11,R11,#1
-	ADD R12,R12,#1
 	B BEG
 end: .end
