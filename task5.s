@@ -21,17 +21,30 @@ empty4: .space 4
 blue: 	.space 100
 empty5: .space 4
 alpha: 	.space 100
+empty6:	.space 4
 output_image: 	.space 100
 
 _start:
+	MOV R10,#0
+	MOV R11,#0
+	MOV R12,#0 //increment this by 1 to get next window
 	LDR R1,=input_image
 	MOV R2, #0 //R2=j
 	MOV R3, #0 //R3=i
-	MOV R6,#5
-	MOV R7,#0 //increment this by 1 to get next window 
+	MOV R6,#5 
+	MOV R7,#0
 	MOV R8,#0
 	LDR R4,=result 
 	B innerloop
+BEG:
+	CMP R11,#2
+	BGT end
+	LDR R1,=input_image
+	MOV R2, #0 //R2=j
+	MOV R3, #0 //R3=i
+	MOV R6,#5 
+	MOV R8,#0
+	LDR R4,=result 
 top:
 	ADD R2,R2,#1
 	CMP R2,#5
@@ -256,7 +269,8 @@ getResult:
 updateOutput:
 	LDR R1,=output_image
 	STR R6, [R1,R10,LSL#2]
-	ADD R6,R6,#1
+	ADD R10,R10,#1
 	ADD R11,R11,#1
-	B end 
+	ADD R12,R12,#1
+	B BEG
 end: .end
