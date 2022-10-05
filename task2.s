@@ -1,12 +1,12 @@
 .global _start
-arr:   .word 68, -22, -31, 75, -10, -61, 39, 92, 94, -55 // test array of 10 elements 
+arr:   .word 68, -22, -31, -10, -61, 39, 92, 94, -55 // test array of 10 elements 
 
 _start:
 	LDR R0,=arr //pointer to array a.k.a base address of array 
-	MOV R1,#10 //length of array (n)
+	MOV R1,#9 //length of array (n)
 	MOV R2,#1 //index i=1
 
-TOP:
+INSERTIONSORT:
 	CMP R2,R1 //R2-R1=i-n
 	BLT OUTERLOOP //if R2<R1 => i<n then branch 
 	B end
@@ -19,7 +19,7 @@ INNERLOOP2C:
 	BGT INNERLOOP1 //if R4-0>0 => R4>0 =>j>0 then branch 
 	STR R3, [R0,R4,LSL#2]// arr[j] = value
 	ADD R2,R2,#1//i = i+1
-	B TOP
+	B INSERTIONSORT
 
 INNERLOOP1:
 	SUB R5,R4,#1 //R5 = j-1
@@ -28,7 +28,7 @@ INNERLOOP1:
 	BGT INNERLOOP2//if arr[j-1]-value>0 => arr[j-1]>value then branch 
 	STR R3, [R0,R4,LSL#2]// arr[j] = value
 	ADD R2,R2,#1//i = i+1
-	B TOP
+	B INSERTIONSORT
 	
 INNERLOOP2:
 	STR R6,[R0,R4,LSL#2]//arr[j]=arr[j-1]
