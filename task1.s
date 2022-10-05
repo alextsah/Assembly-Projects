@@ -1,9 +1,8 @@
 .global _start              
 // initialize values
-devident: .word 10
-devisor: .word 6
+devident: .word 12
+devisor: .word 4
 result: .space 4
-reminder: .word 10
 quotient: .word 0
 
 _start:
@@ -16,7 +15,7 @@ top:
 	CMP R3,R1
 	BGE while
 	ADD R5,R3,R4,LSL#16
-	STR R5, [R2] // R2 = reminder + quotient *4 
+	MOV R2,R5 // R2 = reminder + quotient *4 
 	B end
 while:
 	SUB R3,R3,R1 //Reminder = Reminder - Devisor 
