@@ -2,7 +2,7 @@
 
 This repository is for storing code for ECSE324 Computer Organization. Labs 1,2 and 3 will be stored here to enable access to code during development from any device. <br />
 To access the simulator use: http://ecse324.ece.mcgill.ca/simulator/?sys=arm-de1soc <br />
-The course website can be found at: http://ecse324.ece.mcgill.ca/labs.html
+The course website can be found at: https://bitbucket.org/cdubach/ecse-324-fall2022-public/src/master/labs/
 
 ## Assembler Directives 
 Always start your program with: 
