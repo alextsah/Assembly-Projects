@@ -15,7 +15,7 @@ SECONDTOP:
 	B TOP
 	 
 OUTERLOOP:
-	BL INSERTIONSORT //call subroutine
+	B INSERTIONSORT //call subroutine
 	
 INSERTIONSORT:
 	ADD R1,R1,#1
