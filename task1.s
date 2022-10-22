@@ -1,20 +1,15 @@
 .global _start
-.equ LED_MEMORY, 0xFF200000
-.equ HEX0_3, 0xFF200020
-.equ HEX4_5, 0xFF200030
-.equ on, 0xffffffff
-.equ off,0x00000000
+
+HEX0: .word 0x00000001
+HEX1: .word 0x00000002
+HEX2: .word 0x00000004
+HEX3: .word 0x00000008
+HEX4: .word 0x00000010
+HEX5: .word 0x00000020
+
 _start:
-
-HEX_flood_ASM:
-	LDR R1,=HEX0_3 //to be removed 
-	LDR R2,=on
-	STR R2,[R1]
-
-HEX_clear_ASM:
-	LDR R1,=HEX4_5 //to be removed 
-	LDR R2,=off
-	STR R2,[R1]
+	MOV R0,#12
+	LDR R1,#HEX0
+	AND R2,R0,R1
 
 .end
-
