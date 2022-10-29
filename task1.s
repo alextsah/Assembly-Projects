@@ -58,5 +58,44 @@ turn_on:
 	LDR R9,=HEX4_5
 	STR R10,[R8]
 	STR R12,[R9]
+
+HEX_clear_ASM:
+	LDR R1,#HEX0
+	LDR R3,#HEX0_display
+	ANDS R2,R0,R1
+	BEQ check1_off
+	SUB R10,R10,R3
+	
+check1_off:	LDR R1,#HEX1
+	LDR R3,#HEX1_display
+	ANDS R2,R0,R1
+	BEQ check2_off
+	SUB R10,R10,R3
+check2_off:	LDR R1,#HEX2
+	LDR R3,#HEX2_display
+	ANDS R2,R0,R1
+	BEQ check3_off
+	SUB R10,R10,R3
+check3_off:	LDR R1,#HEX3
+	LDR R3,#HEX3_display
+	ANDS R2,R0,R1
+	BEQ check4_off
+	SUB R10,R10,R3
+check4_off:	LDR R1,#HEX4
+	LDR R3,#HEX4_display
+	ANDS R2,R0,R1
+	BEQ check5_off
+	SUB R12,R12,R3 
+check5_off:	LDR R1,#HEX5
+	LDR R3,#HEX5_display
+	ANDS R2,R0,R1
+	BEQ turn_off
+	SUB R12,R12,R3
+	
+turn_off:
+	LDR R8,=HEX0_3
+	LDR R9,=HEX4_5
+	STR R10,[R8]
+	STR R12,[R9]
 	
 end: .end
