@@ -18,70 +18,43 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R10,#0x00000000
-	MOV R12,#0x00000000
-	LDR R8,=HEX0_3
-	LDR R9,=HEX4_5
-	STR R10,[R8]
-	STR R12,[R9]
-	MOV R10,#0
-	MOV R12,#0
-	MOV R0,#0xc //where is it being written 
-	MOV R1,#0xf //what is being written 
-	
+	MOV R0,#0x1 //where is it being written 
+	MOV R1,#0x1 //what is being written
+	BL HEX_write_ASM
+	B end
+
 HEX_write_ASM:
-	MOV R3,#0
+	PUSH {R4-R12}
 	LDR R2,#HEX0
-	ANDS R4,R0,R2
-	BLNE write
-	ADD R10,R10,R3
+	AND R4,R0,R2
 	B checkHEX1
 	
 checkHEX1:
-	MOV R3,#0
 	LDR R2,#HEX1
-	ANDS R4,R0,R2
-	BLNE write
-	LSL R3,R3,#8
-	ADD R10,R10,R3
+	AND R5,R0,R2
 	B checkHEX2
 	
 checkHEX2:
-	MOV R3,#0
 	LDR R2,#HEX2
-	ANDS R4,R0,R2
-	BLNE write
-	LSL R3,R3,#16
-	ADD R10,R10,R3
+	AND R6,R0,R2
 	B checkHEX3
 
 checkHEX3:
-	MOV R3,#0
 	LDR R2,#HEX3
-	ANDS R4,R0,R2
-	BLNE write
-	LSL R3,R3,#24
-	ADD R10,R10,R3
+	AND R7,R0,R2
 	B checkHEX4
 	
 checkHEX4:
-	MOV R3,#0
 	LDR R2,#HEX4
-	ANDS R4,R0,R2
-	BLNE write
-	ADD R12,R12,R3
-	B turn_on
+	AND R8,R0,R2
+	B checkHEX5
 
 checkHEX5:
-	MOV R3,#0
 	LDR R2,#HEX5
-	ANDS R4,R0,R2
-	BLNE write
-	LSL R3,R3,#8
-	ADD R12,R12,R3
-	B turn_on
+	AND R9,R0,R2
+	B find_what_to_write
 	
-write:
+find_what_to_write:
 	CMP R1,#0
 	BEQ write_zero
 	CMP R1,#1
@@ -116,57 +89,117 @@ write:
 	BEQ write_f
 
 write_zero:
-	MOV R3,#0x3f
-	BX LR
+	MOV R2,#0x3f
+	B write
 write_one:
-	MOV R3,#0x6
-	BX LR
+	MOV R2,#0x6
+	B write
 write_two:
-	MOV R3,#0x5b
-	BX LR
+	MOV R2,#0x5b
+	B write
 write_three:
-	MOV R3,#0x4f
-	BX LR
+	MOV R2,#0x4f
+	B write
 write_four:
-	MOV R3,#0x67
-	BX LR
+	MOV R2,#0x66
+	B write
 write_five:
-	MOV R3,#0x6d
-	BX LR
+	MOV R2,#0x6d
+	B write
 write_six:
-	MOV R3,#0x7d
-	BX LR
+	MOV R2,#0x7d
+	B write
 write_seven:
-	MOV R3,#0x6
-	BX LR
+	MOV R2,#0x7
+	B write
 write_eight:
-	MOV R3,#0x7f
-	BX LR
+	MOV R2,#0x7f
+	B write
 write_nine:
-	MOV R3,#0x6f
-	BX LR
+	MOV R2,#0x6f
+	B write
 write_a:
-	MOV R3,#0xf7
-	BX LR
+	MOV R2,#0xf7
+	B write
 write_b:
-	MOV R3,#0x7f
-	BX LR
+	MOV R2,#0x7f
+	B write
 write_c:
-	MOV R3,#0x39
-	BX LR
+	MOV R2,#0x39
+	B write
 write_d:
-	MOV R3,#0x3f
-	BX LR
+	MOV R2,#0x3f
+	B write
 write_e:
-	MOV R3,#0x79
-	BX LR
+	MOV R2,#0x79
+	B write
 write_f:
-	MOV R3,#0x71
-	BX LR
+	MOV R2,#0x71
+	B write
+	
+write:
+	CMP R4,#0
+	BNE write_HEX0
+checkHEX1write:
+	CMP R5,#0
+	BNE write_HEX1
+checkHEX2write:
+	CMP R6,#0
+	BNE write_HEX2
+checkHEX3write:
+	CMP R7,#0
+	BNE write_HEX3
+checkHEX4write:
+	CMP R8,#0
+	BNE write_HEX4
+checkHEX5write:
+	CMP R9,#0
+	BNE write_HEX5
+	B turn_on
+
+write_HEX0:
+	MOV R12,#0xFFFFFF00
+	AND R3,R3,R12
+	ORR R3,R3,R2
+	B checkHEX1write
+write_HEX1:
+	MOV R12,#0xFFFF00FF
+	AND R3,R3,R12
+	LSL R2,R2,#8
+	ORR R3,R3,R2
+	B checkHEX2write
+write_HEX2:
+	MOV R12,#0xFF00FFFF
+	AND R3,R3,R12
+	LSL R2,R2,#16
+	ORR R3,R3,R2
+	B checkHEX3write
+write_HEX3:
+	MOV R12,#0x00FFFFFF
+	AND R3,R3,R12
+	LSL R2,R2,#24
+	ORR R3,R3,R2
+	B checkHEX4write
+write_HEX4:
+	MOV R12,#0xFFFFFF00
+	AND R3,R3,R12
+	ORR R12,R12,R2
+	B checkHEX5write
+write_HEX5:
+	MOV R12,#0xFFFF00FF
+	AND R3,R3,R12
+	LSL R2,R2,#8
+	ORR R12,R12,R2
+	B turn_on
 	
 turn_on:
 	LDR R8,=HEX0_3
 	LDR R9,=HEX4_5
-	STR R10,[R8]
-	STR R12,[R9]
+	STR R3,[R8]
+	STR R2,[R9]
+	POP {R4-R12}
+	BX LR
+	
+end:
+	B end
 	.end
