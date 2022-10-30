@@ -18,47 +18,47 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R0,#0x3f
+	MOV R0,#0x3F
 	BL HEX_flood_ASM
-	MOV R0,#0x3f
+	MOV R0,#0x8
 	BL HEX_clear_ASM
 	B end 
 	
 HEX_clear_ASM:
 	PUSH {R4-R12}
 	LDR R5,#HEX0
-	LDR R4,#HEX0_display
+	MOV R4,#0xFFFFFF00
 	ANDS R6,R0,R5
 	BEQ check1
 	AND R2,R2,R4
 	
 check1:	
 	LDR R5,#HEX1
-	LDR R4,#HEX1_display
+	MOV R4,#0xFFFF00FF
 	ANDS R6,R0,R5
 	BEQ check2
 	AND R2,R2,R4
 check2:	
 	LDR R5,#HEX2
-	LDR R4,#HEX2_display
+	MOV R4,#0xFF00FFFF
 	ANDS R6,R0,R5
 	BEQ check3
 	AND R2,R2,R4
 check3:	
 	LDR R5,#HEX3
-	LDR R4,#HEX3_display
+	MOV R4,#0x00FFFFFF
 	ANDS R6,R0,R5
 	BEQ check4
 	AND R2,R2,R4
 check4:	
 	LDR R5,#HEX4
-	LDR R4,#HEX4_display
+	MOV R4,#0xFFFFFF00
 	ANDS R6,R0,R5
 	BEQ check5
 	AND R3,R3,R4
 check5:	
 	LDR R5,#HEX5
-	LDR R4,#HEX5_display
+	MOV R4,#0xFFFF00FF
 	ANDS R6,R0,R5
 	BEQ turn_on
 	AND R3,R3,R4
