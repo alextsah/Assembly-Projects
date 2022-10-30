@@ -18,84 +18,106 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R0,#0xC
+	MOV R0,#0x3f
+	BL HEX_flood_ASM
+	MOV R0,#0x3f
+	BL HEX_clear_ASM
+	B end 
 	
-HEX_flood_ASM:
-	LDR R1,#HEX0
-	LDR R3,#HEX0_display
-	ANDS R2,R0,R1
-	BEQ check1
-	ADD R10,R10,R3
-	
-check1:	LDR R1,#HEX1
-	LDR R3,#HEX1_display
-	ANDS R2,R0,R1
-	BEQ check2
-	ADD R10,R10,R3
-check2:	LDR R1,#HEX2
-	LDR R3,#HEX2_display
-	ANDS R2,R0,R1
-	BEQ check3
-	ADD R10,R10,R3
-check3:	LDR R1,#HEX3
-	LDR R3,#HEX3_display
-	ANDS R2,R0,R1
-	BEQ check4
-	ADD R10,R10,R3
-check4:	LDR R1,#HEX4
-	LDR R3,#HEX4_display
-	ANDS R2,R0,R1
-	BEQ check5
-	ADD R12,R12,R3 
-check5:	LDR R1,#HEX5
-	LDR R3,#HEX5_display
-	ANDS R2,R0,R1
-	BEQ turn_on
-	ADD R12,R12,R3
-	
-turn_on:
-	LDR R8,=HEX0_3
-	LDR R9,=HEX4_5
-	STR R10,[R8]
-	STR R12,[R9]
-
 HEX_clear_ASM:
-	LDR R1,#HEX0
-	LDR R3,#HEX0_display
-	ANDS R2,R0,R1
-	BEQ check1_off
-	SUB R10,R10,R3
+	PUSH {R4-R12}
+	LDR R5,#HEX0
+	LDR R4,#HEX0_display
+	ANDS R6,R0,R5
+	BEQ check1
+	AND R2,R2,R4
 	
-check1_off:	LDR R1,#HEX1
-	LDR R3,#HEX1_display
-	ANDS R2,R0,R1
-	BEQ check2_off
-	SUB R10,R10,R3
-check2_off:	LDR R1,#HEX2
-	LDR R3,#HEX2_display
-	ANDS R2,R0,R1
-	BEQ check3_off
-	SUB R10,R10,R3
-check3_off:	LDR R1,#HEX3
-	LDR R3,#HEX3_display
-	ANDS R2,R0,R1
-	BEQ check4_off
-	SUB R10,R10,R3
-check4_off:	LDR R1,#HEX4
-	LDR R3,#HEX4_display
-	ANDS R2,R0,R1
-	BEQ check5_off
-	SUB R12,R12,R3 
-check5_off:	LDR R1,#HEX5
-	LDR R3,#HEX5_display
-	ANDS R2,R0,R1
-	BEQ turn_off
-	SUB R12,R12,R3
+check1:	
+	LDR R5,#HEX1
+	LDR R4,#HEX1_display
+	ANDS R6,R0,R5
+	BEQ check2
+	AND R2,R2,R4
+check2:	
+	LDR R5,#HEX2
+	LDR R4,#HEX2_display
+	ANDS R6,R0,R5
+	BEQ check3
+	AND R2,R2,R4
+check3:	
+	LDR R5,#HEX3
+	LDR R4,#HEX3_display
+	ANDS R6,R0,R5
+	BEQ check4
+	AND R2,R2,R4
+check4:	
+	LDR R5,#HEX4
+	LDR R4,#HEX4_display
+	ANDS R6,R0,R5
+	BEQ check5
+	AND R3,R3,R4
+check5:	
+	LDR R5,#HEX5
+	LDR R4,#HEX5_display
+	ANDS R6,R0,R5
+	BEQ turn_on
+	AND R3,R3,R4
 	
 turn_off:
 	LDR R8,=HEX0_3
 	LDR R9,=HEX4_5
-	STR R10,[R8]
-	STR R12,[R9]
+	STR R2,[R8]
+	STR R3,[R9]
+	POP {R4-R12}
+	BX LR 
 	
-end: .end
+HEX_flood_ASM:
+	PUSH {R4-R12}
+	LDR R5,#HEX0
+	LDR R4,#HEX0_display
+	ANDS R6,R0,R5
+	BEQ check1_on
+	ORR R2,R2,R4
+	
+check1_on:	
+	LDR R5,#HEX1
+	LDR R4,#HEX1_display
+	ANDS R6,R0,R5
+	BEQ check2_on
+	ORR R2,R2,R4
+check2_on:	
+	LDR R5,#HEX2
+	LDR R4,#HEX2_display
+	ANDS R6,R0,R5
+	BEQ check3_on
+	ORR R2,R2,R4
+check3_on:	
+	LDR R5,#HEX3
+	LDR R4,#HEX3_display
+	ANDS R6,R0,R5
+	BEQ check4_on
+	ORR R2,R2,R4
+check4_on:	
+	LDR R5,#HEX4
+	LDR R4,#HEX4_display
+	ANDS R6,R0,R5
+	BEQ check5_on
+	ORR R3,R3,R4
+check5_on:	
+	LDR R5,#HEX5
+	LDR R4,#HEX5_display
+	ANDS R6,R0,R5
+	BEQ turn_on
+	ORR R3,R3,R4
+	
+turn_on:
+	LDR R8,=HEX0_3
+	LDR R9,=HEX4_5
+	STR R2,[R8]
+	STR R3,[R9]
+	POP {R4-R12}
+	BX LR
+	
+end: 
+	B end
+.end
