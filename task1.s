@@ -18,6 +18,13 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
+	MOV R0,#0x3F
+	BL HEX_clear_ASM
+	MOV R0,#0x2
+	BL HEX_flood_ASM
+	MOV R0,#0x20
+	MOV R1,#0x5
+	BL HEX_write_ASM
 	MOV R0,#0x10
 	MOV R1,#0x5
 	BL HEX_write_ASM
@@ -25,10 +32,10 @@ _start:
 	
 HEX_clear_ASM:
 	PUSH {R2-R12}
-	LDR R3,=HEX4_5
-	LDR R3,[R3]
 	LDR R2,=HEX0_3
 	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
 	LDR R5,#HEX0
 	MOV R4,#0xFFFFFF00
 	ANDS R6,R0,R5
@@ -76,10 +83,10 @@ turn_off:
 	
 HEX_flood_ASM:
 	PUSH {R2-R12}
-	LDR R3,=HEX4_5
-	LDR R3,[R3]
 	LDR R2,=HEX0_3
 	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
 	LDR R5,#HEX0
 	LDR R4,#HEX0_display
 	ANDS R6,R0,R5
@@ -124,13 +131,13 @@ turn_on:
 	STR R3,[R9]
 	POP {R2-R12}
 	BX LR
-	
+
 HEX_write_ASM:
 	PUSH {R2-R12}
-	LDR R3,=HEX0_3
-	LDR R3,[R3]
-	LDR R2,=HEX4_5
+	LDR R2,=HEX0_3
 	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
 	LDR R10,#HEX0
 	AND R4,R0,R10
 	B checkHEX1
@@ -265,47 +272,47 @@ checkHEX5write:
 
 write_HEX0:
 	MOV R12,#0xFFFFFF00
-	AND R3,R3,R12
-	ORR R3,R3,R10
-	B checkHEX1write
-write_HEX1:
-	MOV R12,#0xFFFF00FF
-	AND R3,R3,R12
-	LSL R11,R10,#8
-	ORR R3,R3,R11
-	B checkHEX2write
-write_HEX2:
-	MOV R12,#0xFF00FFFF
-	AND R3,R3,R12
-	LSL R11,R10,#16
-	ORR R3,R3,R11
-	B checkHEX3write
-write_HEX3:
-	MOV R12,#0x00FFFFFF
-	AND R3,R3,R12
-	LSL R11,R10,#24
-	ORR R3,R3,R11
-	B checkHEX4write
-write_HEX4:
-	MOV R12,#0xFFFFFF00
 	AND R2,R2,R12
 	ORR R2,R2,R10
-	B checkHEX5write
-write_HEX5:
+	B checkHEX1write
+write_HEX1:
 	MOV R12,#0xFFFF00FF
 	AND R2,R2,R12
 	LSL R11,R10,#8
 	ORR R2,R2,R11
+	B checkHEX2write
+write_HEX2:
+	MOV R12,#0xFF00FFFF
+	AND R2,R2,R12
+	LSL R11,R10,#16
+	ORR R2,R2,R11
+	B checkHEX3write
+write_HEX3:
+	MOV R12,#0x00FFFFFF
+	AND R2,R2,R12
+	LSL R11,R10,#24
+	ORR R2,R2,R11
+	B checkHEX4write
+write_HEX4:
+	MOV R12,#0xFFFFFF00
+	AND R3,R3,R12
+	ORR R3,R3,R10
+	B checkHEX5write
+write_HEX5:
+	MOV R12,#0xFFFF00FF
+	AND R3,R3,R12
+	LSL R11,R10,#8
+	ORR R3,R3,R11
 	B write_on
 	
 write_on:
 	LDR R8,=HEX0_3
 	LDR R9,=HEX4_5
-	STR R3,[R8]
-	STR R2,[R9]
+	STR R2,[R8]
+	STR R3,[R9]
 	POP {R2-R12}
 	BX LR
 	
-end: 
+end:
 	B end
-.end
+	.end
