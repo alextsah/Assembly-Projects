@@ -18,13 +18,17 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R0,#0x27
-	MOV R1,#0x2
+	MOV R0,#0x3f
+	MOV R1,#0xa
 	BL HEX_write_ASM
 	B end
 
 HEX_write_ASM:
-	PUSH {R4-R12}
+	PUSH {R2-R12}
+	LDR R3,=HEX0_3
+	LDR R3,[R3]
+	LDR R2,=HEX4_5
+	LDR R2,[R2]
 	LDR R10,#HEX0
 	AND R4,R0,R10
 	B checkHEX1
@@ -197,7 +201,7 @@ turn_on:
 	LDR R9,=HEX4_5
 	STR R3,[R8]
 	STR R2,[R9]
-	POP {R4-R12}
+	POP {R2-R12}
 	BX LR
 	
 end:
