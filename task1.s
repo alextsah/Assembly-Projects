@@ -70,7 +70,7 @@ check5:
 	LDR R5,#HEX5
 	MOV R4,#0xFFFF00FF
 	ANDS R6,R0,R5
-	BEQ turn_on
+	BEQ turn_off
 	AND R3,R3,R4
 	
 turn_off:
@@ -268,7 +268,7 @@ checkHEX4write:
 checkHEX5write:
 	CMP R9,#0
 	BNE write_HEX5
-	B turn_on
+	B write_on
 
 write_HEX0:
 	MOV R12,#0xFFFFFF00
