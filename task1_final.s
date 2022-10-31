@@ -27,8 +27,11 @@ read_slider_switches_ASM:
 return2:
     LDR R3, =SW_MEMORY
     LDR R2, [R3]
+	
 	CMP R2,#0x200
-	BGT clear_all
+	BGE clear_all
+	MOV R0,#0x30
+	BL HEX_flood_ASM 
     B write_LEDs_ASM
 
 write_LEDs_ASM:
@@ -282,3 +285,54 @@ turn_off:
 	STR R3,[R9]
 	POP {R2-R12}
 	BX LR 
+
+HEX_flood_ASM:
+	PUSH {R2-R12}
+	LDR R2,=HEX0_3
+	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
+	LDR R5,#HEX0
+	LDR R4,#HEX0_display
+	ANDS R6,R0,R5
+	BEQ check1_on
+	ORR R2,R2,R4
+	
+check1_on:	
+	LDR R5,#HEX1
+	LDR R4,#HEX1_display
+	ANDS R6,R0,R5
+	BEQ check2_on
+	ORR R2,R2,R4
+check2_on:	
+	LDR R5,#HEX2
+	LDR R4,#HEX2_display
+	ANDS R6,R0,R5
+	BEQ check3_on
+	ORR R2,R2,R4
+check3_on:	
+	LDR R5,#HEX3
+	LDR R4,#HEX3_display
+	ANDS R6,R0,R5
+	BEQ check4_on
+	ORR R2,R2,R4
+check4_on:	
+	LDR R5,#HEX4
+	LDR R4,#HEX4_display
+	ANDS R6,R0,R5
+	BEQ check5_on
+	ORR R3,R3,R4
+check5_on:	
+	LDR R5,#HEX5
+	LDR R4,#HEX5_display
+	ANDS R6,R0,R5
+	BEQ turn_on
+	ORR R3,R3,R4
+	
+turn_on:
+	LDR R8,=HEX0_3
+	LDR R9,=HEX4_5
+	STR R2,[R8]
+	STR R3,[R9]
+	POP {R2-R12}
+	BX LR
