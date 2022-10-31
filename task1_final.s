@@ -1,11 +1,12 @@
 .global _start
-.equ HEX0_3, 0xFF200020
-.equ HEX4_5, 0xFF200030
+.equ SW_MEMORY, 0xFF200040
+.equ LED_MEMORY, 0xFF200000
 .equ PUSHBUTTONS, 0xFF200050 
 .equ PBEDGECAPTURE, 0xFF20005C
 .equ PBINTERRUPT, 0xFF200058
-.equ SW_MEMORY, 0xFF200040
-.equ LED_MEMORY, 0xFF200000
+
+.equ HEX0_3, 0xFF200020
+.equ HEX4_5, 0xFF200030
 
 HEX0: .word 0x00000001
 HEX1: .word 0x00000002
@@ -20,164 +21,36 @@ HEX2_display: .word 0x007F0000
 HEX3_display: .word 0x7F000000
 HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
-
-PB0: .word 0x00000001
-PB1: .word 0x00000002
-PB2: .word 0x00000004
-PB3: .word 0x00000008
-
 _start:
-	MOV R0,#0x30
-	BL HEX_flood_ASM
 
 read_slider_switches_ASM:
-    LDR R1, =SW_MEMORY
-    LDR R0, [R1]
+return2:
+    LDR R3, =SW_MEMORY
+    LDR R2, [R3]
+	CMP R2,#0x200
+	BGT clear_all
     B write_LEDs_ASM
 
 write_LEDs_ASM:
-    LDR R1, =LED_MEMORY
-    STR R0, [R1]
-    B read_PB_data_ASM
+    LDR R3, =LED_MEMORY
+    STR R2, [R3]
+	B read_PB_data_ASM
+	
+write_HEX:
+	MOV R1,R2
+	BL HEX_write_ASM
+    B read_slider_switches_ASM
 	
 read_PB_data_ASM:
-	LDR R1,=PUSHBUTTONS
-	LDR R1,[R1]
-	B setup_hex_write
+	LDR R0,=PUSHBUTTONS
+	LDR R0,[R0]
+	B write_HEX
 	
-setup_hex_write:
-	CMP R1,#0x1
-	BEQ write_HEX0_pb
-	CMP R1,#0x2
-	BEQ write_HEX1_pb
-	CMP R1,#0x4
-	BEQ write_HEX2_pb
-	CMP R1,#0x8
-	BEQ write_HEX3_pb
+clear_all:
+	MOV R0,#0x3F
+	BL HEX_clear_ASM
+	B return2
 	
-write_HEX0_pb:
-	MOV R1,R0
-	LDR R0,#HEX0
-	BL HEX_write_ASM
-	B end
-write_HEX1_pb:
-	MOV R1,R0
-	LDR R0,#HEX1
-	BL HEX_write_ASM
-	B end
-write_HEX2_pb:
-	MOV R1,R0
-	LDR R0,#HEX2
-	BL HEX_write_ASM
-	B end
-write_HEX3_pb:
-	MOV R1,R0
-	LDR R0,#HEX3
-	BL HEX_write_ASM
-	B end
-	
-HEX_clear_ASM:
-	PUSH {R2-R12}
-	LDR R2,=HEX0_3
-	LDR R2,[R2]
-	LDR R3,=HEX4_5
-	LDR R3,[R3]
-	LDR R5,#HEX0
-	MOV R4,#0xFFFFFF00
-	ANDS R6,R0,R5
-	BEQ check1
-	AND R2,R2,R4
-	
-check1:	
-	LDR R5,#HEX1
-	MOV R4,#0xFFFF00FF
-	ANDS R6,R0,R5
-	BEQ check2
-	AND R2,R2,R4
-check2:	
-	LDR R5,#HEX2
-	MOV R4,#0xFF00FFFF
-	ANDS R6,R0,R5
-	BEQ check3
-	AND R2,R2,R4
-check3:	
-	LDR R5,#HEX3
-	MOV R4,#0x00FFFFFF
-	ANDS R6,R0,R5
-	BEQ check4
-	AND R2,R2,R4
-check4:	
-	LDR R5,#HEX4
-	MOV R4,#0xFFFFFF00
-	ANDS R6,R0,R5
-	BEQ check5
-	AND R3,R3,R4
-check5:	
-	LDR R5,#HEX5
-	MOV R4,#0xFFFF00FF
-	ANDS R6,R0,R5
-	BEQ turn_off
-	AND R3,R3,R4
-	
-turn_off:
-	LDR R8,=HEX0_3
-	LDR R9,=HEX4_5
-	STR R2,[R8]
-	STR R3,[R9]
-	POP {R2-R12}
-	BX LR 
-	
-HEX_flood_ASM:
-	PUSH {R2-R12}
-	LDR R2,=HEX0_3
-	LDR R2,[R2]
-	LDR R3,=HEX4_5
-	LDR R3,[R3]
-	LDR R5,#HEX0
-	LDR R4,#HEX0_display
-	ANDS R6,R0,R5
-	BEQ check1_on
-	ORR R2,R2,R4
-	
-check1_on:	
-	LDR R5,#HEX1
-	LDR R4,#HEX1_display
-	ANDS R6,R0,R5
-	BEQ check2_on
-	ORR R2,R2,R4
-check2_on:	
-	LDR R5,#HEX2
-	LDR R4,#HEX2_display
-	ANDS R6,R0,R5
-	BEQ check3_on
-	ORR R2,R2,R4
-check3_on:	
-	LDR R5,#HEX3
-	LDR R4,#HEX3_display
-	ANDS R6,R0,R5
-	BEQ check4_on
-	ORR R2,R2,R4
-check4_on:	
-	LDR R5,#HEX4
-	LDR R4,#HEX4_display
-	ANDS R6,R0,R5
-	BEQ check5_on
-	ORR R3,R3,R4
-check5_on:	
-	LDR R5,#HEX5
-	LDR R4,#HEX5_display
-	ANDS R6,R0,R5
-	BEQ turn_on
-	ORR R3,R3,R4
-	
-turn_on:
-	LDR R8,=HEX0_3
-	LDR R9,=HEX4_5
-	STR R2,[R8]
-	STR R3,[R9]
-	POP {R2-R12}
-	BX LR
-
 HEX_write_ASM:
 	PUSH {R2-R12}
 	LDR R2,=HEX0_3
@@ -358,7 +231,54 @@ write_on:
 	STR R3,[R9]
 	POP {R2-R12}
 	BX LR
+
+HEX_clear_ASM:
+	PUSH {R2-R12}
+	LDR R2,=HEX0_3
+	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
+	LDR R5,#HEX0
+	MOV R4,#0xFFFFFF00
+	ANDS R6,R0,R5
+	BEQ check1
+	AND R2,R2,R4
 	
-end:
-	B end
-	.end
+check1:	
+	LDR R5,#HEX1
+	MOV R4,#0xFFFF00FF
+	ANDS R6,R0,R5
+	BEQ check2
+	AND R2,R2,R4
+check2:	
+	LDR R5,#HEX2
+	MOV R4,#0xFF00FFFF
+	ANDS R6,R0,R5
+	BEQ check3
+	AND R2,R2,R4
+check3:	
+	LDR R5,#HEX3
+	MOV R4,#0x00FFFFFF
+	ANDS R6,R0,R5
+	BEQ check4
+	AND R2,R2,R4
+check4:	
+	LDR R5,#HEX4
+	MOV R4,#0xFFFFFF00
+	ANDS R6,R0,R5
+	BEQ check5
+	AND R3,R3,R4
+check5:	
+	LDR R5,#HEX5
+	MOV R4,#0xFFFF00FF
+	ANDS R6,R0,R5
+	BEQ turn_off
+	AND R3,R3,R4
+	
+turn_off:
+	LDR R8,=HEX0_3
+	LDR R9,=HEX4_5
+	STR R2,[R8]
+	STR R3,[R9]
+	POP {R2-R12}
+	BX LR 
