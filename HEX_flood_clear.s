@@ -20,16 +20,16 @@ HEX5_display: .word 0x00007F00
 _start:
 	MOV R0,#0x3F
 	BL HEX_flood_ASM
-	MOV R0,#0x35
+	MOV R0,#0x1
 	BL HEX_clear_ASM
 	B end 
 	
 HEX_clear_ASM:
 	PUSH {R2-R12}
-	LDR R3,=HEX4_5
-	LDR R3,[R3]
 	LDR R2,=HEX0_3
 	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
 	LDR R5,#HEX0
 	MOV R4,#0xFFFFFF00
 	ANDS R6,R0,R5
@@ -77,10 +77,10 @@ turn_off:
 	
 HEX_flood_ASM:
 	PUSH {R2-R12}
-	LDR R3,=HEX4_5
-	LDR R3,[R3]
 	LDR R2,=HEX0_3
 	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
 	LDR R5,#HEX0
 	LDR R4,#HEX0_display
 	ANDS R6,R0,R5
