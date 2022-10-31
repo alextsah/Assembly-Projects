@@ -18,8 +18,8 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R0,#0x20
-	MOV R1,#0xf
+	MOV R0,#0x27
+	MOV R1,#0x2
 	BL HEX_write_ASM
 	B end
 
@@ -165,20 +165,20 @@ write_HEX0:
 write_HEX1:
 	MOV R12,#0xFFFF00FF
 	AND R3,R3,R12
-	LSL R10,R10,#8
-	ORR R3,R3,R10
+	LSL R11,R10,#8
+	ORR R3,R3,R11
 	B checkHEX2write
 write_HEX2:
 	MOV R12,#0xFF00FFFF
 	AND R3,R3,R12
-	LSL R10,R10,#16
-	ORR R3,R3,R10
+	LSL R11,R10,#16
+	ORR R3,R3,R11
 	B checkHEX3write
 write_HEX3:
 	MOV R12,#0x00FFFFFF
 	AND R3,R3,R12
-	LSL R10,R10,#24
-	ORR R3,R3,R10
+	LSL R11,R10,#24
+	ORR R3,R3,R11
 	B checkHEX4write
 write_HEX4:
 	MOV R12,#0xFFFFFF00
@@ -188,8 +188,8 @@ write_HEX4:
 write_HEX5:
 	MOV R12,#0xFFFF00FF
 	AND R2,R2,R12
-	LSL R10,R10,#8
-	ORR R2,R2,R10
+	LSL R11,R10,#8
+	ORR R2,R2,R11
 	B turn_on
 	
 turn_on:
