@@ -1,5 +1,6 @@
 .global _start
 .equ PUSHBUTTONS, 0xFF200050
+.equ PBEDGECAPTURE, 0xFF20005C
 
 .equ TIMERLOAD, 0xFFFEC600
 .equ TIMERCOUNTER, 0xFFFEC604
@@ -34,10 +35,31 @@ _start:
 	MOV R7,#0
 	MOV R8,#0
 	MOV R9,#0
-	BL read_PB_data_ASM
+	BL read_PB_edgecp_ASM
 	CMP R1,#0x01
 	BEQ begin
 	B _start
+	
+stop:
+	LDR R1,=TIMERCOUNTER
+	LDR R1,[R1]
+	MOV R2,#0b000
+	B ARM_TIM_config_ASM
+	BL read_PB_data_ASM
+	CMP R1,#0x01
+	BEQ begin
+	BNE stop
+	
+begin_from_reset:
+	MOV R5,#0
+	MOV R6,#0
+	MOV R7,#0
+	MOV R8,#0
+	MOV R9,#0
+	MOV R0,#0x3f
+	BL HEX_clear_ASM
+	B begin 
+	
 begin:
 	LDR R1,=20000000
 	MOV R2,#0b001
@@ -47,6 +69,17 @@ begin:
 read_PB_data_ASM:
 	LDR R0,=PUSHBUTTONS
 	LDR R1,[R0]
+	BX LR
+	
+read_PB_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	BX LR
+	
+PB_clear_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	STR R1,[R0]
 	BX LR
 	
 ARM_TIM_config_ASM:
@@ -67,6 +100,12 @@ ARM_TIM_clear_INT_ASM:
 ARM_TIM_read_INT_ASM:
 	LDR R2,=TIMERINTERUP
 	LDR R3,[R2]
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x04
+	BEQ begin_from_reset
+	CMP R1,#0x2
+	BEQ stop
+	BL PB_clear_edgecp_ASM
 	CMP R3,#1
 	BEQ increment 
 	B ARM_TIM_read_INT_ASM
@@ -314,6 +353,57 @@ write_on:
 	STR R3,[R9]
 	POP {R2-R12}
 	BX LR
+	
+HEX_clear_ASM:
+	PUSH {R2-R12}
+	LDR R2,=HEX0_3
+	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
+	LDR R5,#HEX0
+	MOV R4,#0xFFFFFF00
+	ANDS R6,R0,R5
+	BEQ check1
+	AND R2,R2,R4
+	
+check1:	
+	LDR R5,#HEX1
+	MOV R4,#0xFFFF00FF
+	ANDS R6,R0,R5
+	BEQ check2
+	AND R2,R2,R4
+check2:	
+	LDR R5,#HEX2
+	MOV R4,#0xFF00FFFF
+	ANDS R6,R0,R5
+	BEQ check3
+	AND R2,R2,R4
+check3:	
+	LDR R5,#HEX3
+	MOV R4,#0x00FFFFFF
+	ANDS R6,R0,R5
+	BEQ check4
+	AND R2,R2,R4
+check4:	
+	LDR R5,#HEX4
+	MOV R4,#0xFFFFFF00
+	ANDS R6,R0,R5
+	BEQ check5
+	AND R3,R3,R4
+check5:	
+	LDR R5,#HEX5
+	MOV R4,#0xFFFF00FF
+	ANDS R6,R0,R5
+	BEQ turn_off
+	AND R3,R3,R4
+	
+turn_off:
+	LDR R8,=HEX0_3
+	LDR R9,=HEX4_5
+	STR R2,[R8]
+	STR R3,[R9]
+	POP {R2-R12}
+	BX LR 
 
 end:
 	B end
