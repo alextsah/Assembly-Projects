@@ -26,19 +26,28 @@ HEX5_display: .word 0x00007F00
 _start:
 	MOV R5,#0
 	MOV R6,#0
+	MOV R7,#0
+	MOV R8,#0
+	MOV R9,#0
 	B begin
 start:
 	MOV R5,#1
+	B begin 
+	
+start_min:
+	MOV R5,#1
+	MOV R7,#0
+	B begin 
 	
 begin:
-	LDR R1,=200000000
+	LDR R1,=200000
 	MOV R2,#0b001
 	BL ARM_TIM_clear_INT_ASM
 	BL ARM_TIM_config_ASM
 loop:
 	BL ARM_TIM_read_INT_ASM
 	CMP R2,#1
-	BEQ increment 
+	BEQ increment_mili
 	B loop
 	
 ARM_TIM_config_ASM:
@@ -63,7 +72,7 @@ ARM_TIM_read_INT_ASM:
 	LDR R2,[R2] 
 	BX LR
 
-increment:
+increment_mili:
 	MOV R1,R5
 	MOV R0,#0x01
 	BL HEX_write_ASM
@@ -81,13 +90,74 @@ reset_mili:
 	B increment_seconds
 	
 increment_seconds:
-	CMP R6,#9
-	BEQ end
+	CMP R6,#10
+	BEQ reset_seconds
 	MOV R1,R6
 	MOV R0,#0x02
 	BL HEX_write_ASM
 	B start
 
+reset_seconds:
+	ADD R7,R7,#1
+	MOV R6,#0
+	MOV R1,R6
+	MOV R0,#0x02
+	BL HEX_write_ASM
+	B increment_seconds2
+
+increment_seconds2:
+	CMP R7,#6
+	BEQ reset_seconds2
+	MOV R1,R7
+	MOV R0,#0x04
+	BL HEX_write_ASM
+	B start
+	
+reset_seconds2:
+	ADD R8,R8,#1
+	MOV R7,#0
+	MOV R1,R7
+	MOV R0,#0x04
+	BL HEX_write_ASM
+	MOV R1,R6
+	MOV R0,#0X02
+	BL HEX_write_ASM
+	B increment_minutes
+	
+increment_minutes:
+	CMP R8,#10
+	BEQ reset_minutes
+	MOV R1,R8
+	MOV R0,#0x08
+	BL HEX_write_ASM
+	B start_min
+
+reset_minutes:
+	ADD R9,R9,#1
+	MOV R8,#0
+	MOV R1,R8
+	MOV R0,#0x08
+	BL HEX_write_ASM
+	B increment_minutes2
+	
+increment_minutes2:
+	CMP R9,#6
+	BEQ reset_minutes2
+	MOV R1,R9
+	MOV R0,#0x10
+	BL HEX_write_ASM
+	B start_min
+	
+reset_minutes2:
+	ADD R10,R10,#1
+	MOV R9,#0
+	MOV R1,R9
+	MOV R0,#0x10
+	BL HEX_write_ASM
+	MOV R1,R8
+	MOV R0,#0X08
+	BL HEX_write_ASM
+	B end
 	
 HEX_write_ASM:
 	PUSH {R2-R12}
