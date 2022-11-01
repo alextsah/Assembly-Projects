@@ -1,9 +1,11 @@
 .global _start
+.equ LED_MEMORY, 0xFF200000
 
 .equ TIMERLOAD, 0xFFFEC600
 .equ TIMERCOUNTER, 0xFFFEC604
 .equ TIMERCONTROL, 0xFFFEC608
 .equ TIMERINTERUP, 0xFFFEC60C
+
 .equ HEX0_3, 0xFF200020
 .equ HEX4_5, 0xFF200030
 
@@ -22,47 +24,68 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R1,#0xffffffff
-	MOV R2,#0b11111111111111111111111110000001
-	//MOV R2,#0
+	MOV R5,#0
+	MOV R6,#0
+begin:
+	LDR R1,=20000000
+	MOV R2,#0b001
+	BL ARM_TIM_clear_INT_ASM
 	B ARM_TIM_config_ASM
-count:
-	CMP R4,#0xf
-	BLT ARM_TIM_read_INT_ASM
-	BGE increase
-increase:
-	MOV R4,#0
-	ADD R5,R5,#1
-	
-return2:
-	BGE _start
-	ADD R4,R4,#1
-	MOV R0,#0x01
-	MOV R1,R4
-	BL HEX_write_ASM
-	B _start
 	
 ARM_TIM_config_ASM:
-	PUSH {R3-R12}
 	LDR R3,=TIMERLOAD
 	STR R1,[R3]
 	LDR R4,=TIMERCONTROL
 	STR R2,[R4]
-	POP {R3-R12}
-	B count
-	
-ARM_TIM_read_INT_ASM:
-	LDR R2,=TIMERINTERUP
-	LDR R3,[R2]
-	B return2
+	B ARM_TIM_read_INT_ASM
 	
 ARM_TIM_clear_INT_ASM:
-	PUSH {R2-R12}
+	PUSH {R2-R3}
 	MOV R2,#0x00000001
 	LDR R3,=TIMERINTERUP
 	STR R2,[R3]
-	POP {R2-R12}
+	POP {R2-R3}
 	BX LR 
+
+ARM_TIM_read_INT_ASM:
+	LDR R2,=TIMERINTERUP
+	LDR R3,[R2]
+	CMP R3,#1
+	BEQ increment 
+	B ARM_TIM_read_INT_ASM
+
+increment:
+	ADD R5,R5,#1
+	CMP R5,#0x9
+	BGT increase_seconds
+	MOV R1,R5
+	MOV R0,#0x01
+	BL HEX_write_ASM
+	B begin
+
+increase_seconds:
+	MOV R5,#-1
+	ADD R6,R6,#1
+	CMP R6,#0x9
+	BGT increase_seconds_2
+	MOV R1,R6
+	MOV R0,#0x02
+	BL HEX_write_ASM
+	B begin
+	
+increase_seconds_2:
+	MOV R6,#-1
+	ADD R7,R7,#1
+	CMP R7,#0x9
+	BGT reset
+	MOV R1,R7
+	MOV R0,#0x04
+	BL HEX_write_ASM
+	B begin
+	
+reset:
+	MOV R7,#-1
+	B begin 
 	
 HEX_write_ASM:
 	PUSH {R2-R12}
@@ -240,11 +263,13 @@ write_HEX5:
 write_on:
 	LDR R8,=HEX0_3
 	LDR R9,=HEX4_5
+	LDR R11,=LED_MEMORY
 	STR R2,[R8]
 	STR R3,[R9]
 	POP {R2-R12}
 	BX LR
-	
+
 end:
-	B end 
+	B end
 	.end
+	
