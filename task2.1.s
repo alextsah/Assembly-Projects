@@ -24,19 +24,26 @@ HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
 _start:
-	MOV R5,#-1
+	MOV R5,#0
 begin:
 	LDR R1,=200000000
 	MOV R2,#0b001
 	BL ARM_TIM_clear_INT_ASM
-	B ARM_TIM_config_ASM
+	BL ARM_TIM_config_ASM
+loop:
+	BL ARM_TIM_read_INT_ASM
+	CMP R2,#1
+	BEQ increment 
+	B loop
 	
 ARM_TIM_config_ASM:
+	PUSH {R3-R4}
 	LDR R3,=TIMERLOAD
 	STR R1,[R3]
 	LDR R4,=TIMERCONTROL
 	STR R2,[R4]
-	B ARM_TIM_read_INT_ASM
+	POP {R3-R4}
+	BX LR
 	
 ARM_TIM_clear_INT_ASM:
 	PUSH {R2-R3}
@@ -48,22 +55,16 @@ ARM_TIM_clear_INT_ASM:
 
 ARM_TIM_read_INT_ASM:
 	LDR R2,=TIMERINTERUP
-	LDR R3,[R2]
-	CMP R3,#1
-	BEQ increment 
-	B ARM_TIM_read_INT_ASM
+	LDR R2,[R2] 
+	BX LR
 
 increment:
-	ADD R5,R5,#1
-	CMP R5,#0xf
-	BGT reset
 	MOV R1,R5
 	MOV R0,#0x01
 	BL HEX_write_ASM
-	B begin
-
-reset:
-	MOV R5,#-1
+	ADD R5,R5,#1
+	CMP R5,#16
+	BEQ _start
 	B begin
 	
 HEX_write_ASM:
