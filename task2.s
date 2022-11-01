@@ -1,5 +1,5 @@
 .global _start
-.equ LED_MEMORY, 0xFF200000
+.equ PUSHBUTTONS, 0xFF200050
 
 .equ TIMERLOAD, 0xFFFEC600
 .equ TIMERCOUNTER, 0xFFFEC604
@@ -23,17 +23,31 @@ HEX3_display: .word 0x7F000000
 HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
+PB0: .word 0x00000001
+PB1: .word 0x00000002
+PB2: .word 0x00000004
+PB3: .word 0x00000008
+
 _start:
 	MOV R5,#0
 	MOV R6,#0
 	MOV R7,#0
 	MOV R8,#0
 	MOV R9,#0
+	BL read_PB_data_ASM
+	CMP R1,#0x01
+	BEQ begin
+	B _start
 begin:
 	LDR R1,=20000000
 	MOV R2,#0b001
 	BL ARM_TIM_clear_INT_ASM
 	B ARM_TIM_config_ASM
+	
+read_PB_data_ASM:
+	LDR R0,=PUSHBUTTONS
+	LDR R1,[R0]
+	BX LR
 	
 ARM_TIM_config_ASM:
 	LDR R3,=TIMERLOAD
@@ -296,7 +310,6 @@ write_HEX5:
 write_on:
 	LDR R8,=HEX0_3
 	LDR R9,=HEX4_5
-	LDR R11,=LED_MEMORY
 	STR R2,[R8]
 	STR R3,[R9]
 	POP {R2-R12}
