@@ -26,6 +26,9 @@ HEX5_display: .word 0x00007F00
 _start:
 	MOV R5,#0
 	MOV R6,#0
+	MOV R7,#0
+	MOV R8,#0
+	MOV R9,#0
 begin:
 	LDR R1,=20000000
 	MOV R2,#0b001
@@ -77,9 +80,39 @@ increase_seconds_2:
 	MOV R6,#-1
 	ADD R7,R7,#1
 	CMP R7,#0x9
-	BGT reset
+	BGT increase_minutes
 	MOV R1,R7
 	MOV R0,#0x04
+	BL HEX_write_ASM
+	B begin
+	
+increase_minutes:
+	MOV R7,#-1
+	ADD R8,R8,#1
+	CMP R8,#0x9
+	BGT increase_minutes_2
+	MOV R1,R8
+	MOV R0,#0x08
+	BL HEX_write_ASM
+	B begin
+
+increase_minutes_2:
+	MOV R8,#-1
+	ADD R9,R9,#1
+	CMP R9,#0x9
+	BGT increase_hours
+	MOV R1,R9
+	MOV R0,#0x10
+	BL HEX_write_ASM
+	B begin
+
+increase_hours:
+	MOV R8,#-1
+	ADD R9,R9,#1
+	CMP R9,#0x9
+	BGT end
+	MOV R1,R9
+	MOV R0,#0x20
 	BL HEX_write_ASM
 	B begin
 	
