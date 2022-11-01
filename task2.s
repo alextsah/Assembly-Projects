@@ -1,5 +1,6 @@
 .global _start
-.equ LED_MEMORY, 0xFF200000
+.equ PUSHBUTTONS, 0xFF200050
+.equ PBEDGECAPTURE, 0xFF20005C
 
 .equ TIMERLOAD, 0xFFFEC600
 .equ TIMERCOUNTER, 0xFFFEC604
@@ -23,27 +24,75 @@ HEX3_display: .word 0x7F000000
 HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 
+PB0: .word 0x00000001
+PB1: .word 0x00000002
+PB2: .word 0x00000004
+PB3: .word 0x00000008
+
 _start:
 	MOV R5,#0
-begin:
-	LDR R1,=200000000
-	MOV R2,#0b001
-	BL ARM_TIM_clear_INT_ASM
-	BL ARM_TIM_config_ASM
-loop:
-	BL ARM_TIM_read_INT_ASM
-	CMP R2,#1
-	BEQ increment 
-	B loop
+	MOV R6,#0
+	MOV R7,#0
+	MOV R8,#0
+	MOV R9,#0
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x01
+	BEQ begin
+	B _start
 	
-ARM_TIM_config_ASM:
-	PUSH {R3-R4}
+stop:
+	
+	LDR R1,=TIMERCOUNTER
+	LDR R1,[R1]
+	MOV R2,#0b000
 	LDR R3,=TIMERLOAD
 	STR R1,[R3]
 	LDR R4,=TIMERCONTROL
 	STR R2,[R4]
-	POP {R3-R4}
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x01
+	BEQ begin
+	BL PB_clear_edgecp_ASM
+	BNE stop
+	
+begin_from_reset:
+	MOV R5,#0
+	MOV R6,#0
+	MOV R7,#0
+	MOV R8,#0
+	MOV R9,#0
+	MOV R0,#0x3f
+	BL HEX_clear_ASM
+	B begin 
+	
+begin:
+	LDR R1,=20000000
+	MOV R2,#0b001
+	BL ARM_TIM_clear_INT_ASM
+	B ARM_TIM_config_ASM
+	
+read_PB_data_ASM:
+	LDR R0,=PUSHBUTTONS
+	LDR R1,[R0]
 	BX LR
+	
+read_PB_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	BX LR
+	
+PB_clear_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	STR R1,[R0]
+	BX LR
+	
+ARM_TIM_config_ASM:
+	LDR R3,=TIMERLOAD
+	STR R1,[R3]
+	LDR R4,=TIMERCONTROL
+	STR R2,[R4]
+	B ARM_TIM_read_INT_ASM
 	
 ARM_TIM_clear_INT_ASM:
 	PUSH {R2-R3}
@@ -55,17 +104,79 @@ ARM_TIM_clear_INT_ASM:
 
 ARM_TIM_read_INT_ASM:
 	LDR R2,=TIMERINTERUP
-	LDR R2,[R2] 
-	BX LR
+	LDR R3,[R2]
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x4
+	BEQ begin_from_reset
+	CMP R1,#0x2
+	BEQ stop
+	BL PB_clear_edgecp_ASM
+	CMP R3,#1
+	BEQ increment 
+	B ARM_TIM_read_INT_ASM
 
 increment:
+	ADD R5,R5,#1
+	CMP R5,#0x9
+	BGT increase_seconds
 	MOV R1,R5
 	MOV R0,#0x01
 	BL HEX_write_ASM
-	ADD R5,R5,#1
-	CMP R5,#16
-	BEQ _start
 	B begin
+
+increase_seconds:
+	MOV R5,#-1
+	ADD R6,R6,#1
+	CMP R6,#0x9
+	BGT increase_seconds_2
+	MOV R1,R6
+	MOV R0,#0x02
+	BL HEX_write_ASM
+	B begin
+	
+increase_seconds_2:
+	MOV R6,#-1
+	ADD R7,R7,#1
+	CMP R7,#0x9
+	BGT increase_minutes
+	MOV R1,R7
+	MOV R0,#0x04
+	BL HEX_write_ASM
+	B begin
+	
+increase_minutes:
+	MOV R7,#-1
+	ADD R8,R8,#1
+	CMP R8,#0x9
+	BGT increase_minutes_2
+	MOV R1,R8
+	MOV R0,#0x08
+	BL HEX_write_ASM
+	B begin
+
+increase_minutes_2:
+	MOV R8,#-1
+	ADD R9,R9,#1
+	CMP R9,#0x9
+	BGT increase_hours
+	MOV R1,R9
+	MOV R0,#0x10
+	BL HEX_write_ASM
+	B begin
+
+increase_hours:
+	MOV R8,#-1
+	ADD R9,R9,#1
+	CMP R9,#0x9
+	BGT end
+	MOV R1,R9
+	MOV R0,#0x20
+	BL HEX_write_ASM
+	B begin
+	
+reset:
+	MOV R7,#-1
+	B begin 
 	
 HEX_write_ASM:
 	PUSH {R2-R12}
@@ -243,14 +354,62 @@ write_HEX5:
 write_on:
 	LDR R8,=HEX0_3
 	LDR R9,=HEX4_5
-	LDR R11,=LED_MEMORY
 	STR R2,[R8]
 	STR R3,[R9]
-	STR R1,[R11]
 	POP {R2-R12}
 	BX LR
+	
+HEX_clear_ASM:
+	PUSH {R2-R12}
+	LDR R2,=HEX0_3
+	LDR R2,[R2]
+	LDR R3,=HEX4_5
+	LDR R3,[R3]
+	LDR R5,#HEX0
+	MOV R4,#0xFFFFFF00
+	ANDS R6,R0,R5
+	BEQ check1
+	AND R2,R2,R4
+	
+check1:	
+	LDR R5,#HEX1
+	MOV R4,#0xFFFF00FF
+	ANDS R6,R0,R5
+	BEQ check2
+	AND R2,R2,R4
+check2:	
+	LDR R5,#HEX2
+	MOV R4,#0xFF00FFFF
+	ANDS R6,R0,R5
+	BEQ check3
+	AND R2,R2,R4
+check3:	
+	LDR R5,#HEX3
+	MOV R4,#0x00FFFFFF
+	ANDS R6,R0,R5
+	BEQ check4
+	AND R2,R2,R4
+check4:	
+	LDR R5,#HEX4
+	MOV R4,#0xFFFFFF00
+	ANDS R6,R0,R5
+	BEQ check5
+	AND R3,R3,R4
+check5:	
+	LDR R5,#HEX5
+	MOV R4,#0xFFFF00FF
+	ANDS R6,R0,R5
+	BEQ turn_off
+	AND R3,R3,R4
+	
+turn_off:
+	LDR R8,=HEX0_3
+	LDR R9,=HEX4_5
+	STR R2,[R8]
+	STR R3,[R9]
+	POP {R2-R12}
+	BX LR 
 
 end:
 	B end
 	.end
-	
