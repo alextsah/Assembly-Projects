@@ -41,13 +41,18 @@ _start:
 	B _start
 	
 stop:
+	
 	LDR R1,=TIMERCOUNTER
 	LDR R1,[R1]
 	MOV R2,#0b000
-	B ARM_TIM_config_ASM
-	BL read_PB_data_ASM
+	LDR R3,=TIMERLOAD
+	STR R1,[R3]
+	LDR R4,=TIMERCONTROL
+	STR R2,[R4]
+	BL read_PB_edgecp_ASM
 	CMP R1,#0x01
 	BEQ begin
+	BL PB_clear_edgecp_ASM
 	BNE stop
 	
 begin_from_reset:
@@ -101,7 +106,7 @@ ARM_TIM_read_INT_ASM:
 	LDR R2,=TIMERINTERUP
 	LDR R3,[R2]
 	BL read_PB_edgecp_ASM
-	CMP R1,#0x04
+	CMP R1,#0x4
 	BEQ begin_from_reset
 	CMP R1,#0x2
 	BEQ stop
@@ -408,4 +413,3 @@ turn_off:
 end:
 	B end
 	.end
-	
