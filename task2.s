@@ -29,6 +29,7 @@ _start:
 	MOV R7,#0
 	MOV R8,#0
 	MOV R9,#0
+	MOV R10,#0
 	B begin
 start:
 	MOV R5,#1
@@ -38,6 +39,11 @@ start_min:
 	MOV R5,#1
 	MOV R7,#0
 	B begin 
+	
+start_hour:
+	MOV R5,#1
+	MOV R7,#0
+	MOV R9,#0
 	
 begin:
 	LDR R1,=200000
@@ -157,7 +163,15 @@ reset_minutes2:
 	MOV R1,R8
 	MOV R0,#0X08
 	BL HEX_write_ASM
-	B end
+	B increment_hours
+
+increment_hours:
+	CMP R10,#10
+	BEQ end
+	MOV R1,R10
+	MOV R0,#0x20
+	BL HEX_write_ASM
+	B start_hour
 	
 HEX_write_ASM:
 	PUSH {R2-R12}
