@@ -10,8 +10,8 @@ B SERVICE_FIQ       // FIQ interrupt vector
 
 .global _start
 
-PB_int_flag : .word 0x0
-tim_int_flag : .word 0x0
+PB_int_flag: .word 0x0
+tim_int_flag: .word 0x0
 
 .equ PUSHBUTTONS, 0xFF200050 
 .equ PBEDGECAPTURE, 0xFF20005C
@@ -59,8 +59,8 @@ _start:
 	MOV R0,#0b0111
 	BL enable_PB_INT_ASM
     // to enable interrupt for ARM A9 private timer, use ARM_TIM_config_ASM subroutine
-	LDR R1,=2000000000
-	MOV R2,#0b111
+	LDR R1,=20000000
+	MOV R2,#0b000
 	BL ARM_TIM_config_ASM
 	
     LDR    R0, =0xFF200050      // pushbutton KEY base address
@@ -80,6 +80,12 @@ IDLE:
 	MOV R1,#0
 	BL HEX_write_ASM
 	
+check_start:
+	LDR R1,=PB_int_flag
+	LDR R1,[R1]
+	TST R1,#0x01
+	BNE pre_begin
+	B check_start
 start:
 	MOV R5,#1
 	B begin 
@@ -95,7 +101,56 @@ start_hour:
 	MOV R9,#0
 	B begin
 	
+pre_begin:
+	
 begin:
+	LDR R1,=20000000
+	MOV R2,#0b001
+	BL ARM_TIM_clear_INT_ASM
+	BL ARM_TIM_config_ASM
+loop:
+	LDR R1,=PB_int_flag
+	LDR R1,[R1]
+	TST R1,#0x02
+	BNE stop
+	LDR R1,=PB_int_flag
+	LDR R1,[R1]
+	TST R1,#0x04
+	BNE _start
+	BL ARM_TIM_read_INT_ASM
+	CMP R2,#1
+	BEQ increment_mili
+	B loop	
+resetBit:
+	MOV R2,#0b001
+	BL ARM_TIM_config_ASM
+	B loop
+
+stop:
+	MOV R2,#0b000
+	BL ARM_TIM_config_ASM
+	LDR R1,=PB_int_flag
+	LDR R1,[R1]
+	TST R1, #0x1
+	BNE resetBit
+	LDR R1,=PB_int_flag
+	LDR R1,[R1]
+	TST R1, #0x4
+	BNE _start
+	B stop
+	
+ARM_TIM_clear_INT_ASM:
+	PUSH {R2-R3}
+	MOV R2,#0x00000001
+	LDR R3,=TIMERINTERUP
+	STR R2,[R3]
+	POP {R2-R3}
+	BX LR 
+
+ARM_TIM_read_INT_ASM:
+	LDR R2,=TIMERINTERUP
+	LDR R2,[R2] 
+	BX LR
 
 increment_mili:
 	MOV R1,R5
@@ -186,12 +241,11 @@ reset_minutes2:
 
 increment_hours:
 	CMP R10,#10
-	BEQ end
+	BEQ IDLE
 	MOV R1,R10
 	MOV R0,#0x20
 	BL HEX_write_ASM
-	B start_hour
-	B IDLE 
+	B start_hour  
 
 /*--- Undefined instructions ---------------------------------------- */
 SERVICE_UND:
@@ -221,12 +275,9 @@ Pushbutton_check:
 UNEXPECTED:
     BNE UNEXPECTED      // if not recognized, stop here
     BL KEY_ISR
+
 EXIT_IRQ:
-Timer_check:
-	CMP R5,#29
-UNEXPECTED2:
-    BNE UNEXPECTED2
-	BL ARM_TIM_ISR
+
 /* Write to the End of Interrupt Register (ICCEOIR) */
     STR R5, [R4, #0x10] // write to ICCEOIR
     POP {R0-R7, LR}
@@ -310,6 +361,7 @@ KEY_ISR:
 	STR R1, [R2]
     MOV R2, #0xF
     STR R2, [R0, #0xC]     // clear the interrupt
+	B END_KEY_ISR
     
 END_KEY_ISR:
     BX LR
