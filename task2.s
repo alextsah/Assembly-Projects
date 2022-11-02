@@ -46,7 +46,7 @@ start_hour:
 	MOV R9,#0
 	
 begin:
-	LDR R1,=200000
+	LDR R1,=20000000
 	MOV R2,#0b001
 	BL ARM_TIM_clear_INT_ASM
 	BL ARM_TIM_config_ASM
