@@ -6,8 +6,17 @@
 .equ TIMERCONTROL, 0xFFFEC608
 .equ TIMERINTERUP, 0xFFFEC60C
 
+.equ PUSHBUTTONS, 0xFF200050 
+.equ PBEDGECAPTURE, 0xFF20005C
+.equ PBINTERRUPT, 0xFF200058
+
 .equ HEX0_3, 0xFF200020
 .equ HEX4_5, 0xFF200030
+
+PB0: .word 0x00000001
+PB1: .word 0x00000002
+PB2: .word 0x00000004
+PB3: .word 0x00000008
 
 HEX0: .word 0x00000001
 HEX1: .word 0x00000002
@@ -30,7 +39,15 @@ _start:
 	MOV R8,#0
 	MOV R9,#0
 	MOV R10,#0
-	B begin
+	MOV R0,#0x3f
+	MOV R1,#0
+	BL HEX_write_ASM
+	BL PB_clear_edgecp_ASM
+check_start:
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x01
+	BEQ pre_begin
+	B check_start
 start:
 	MOV R5,#1
 	B begin 
@@ -44,17 +61,54 @@ start_hour:
 	MOV R5,#1
 	MOV R7,#0
 	MOV R9,#0
+	B begin
 	
+pre_begin:
+	BL PB_clear_edgecp_ASM
 begin:
 	LDR R1,=20000000
 	MOV R2,#0b001
 	BL ARM_TIM_clear_INT_ASM
 	BL ARM_TIM_config_ASM
 loop:
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x02
+	BEQ pre_stop
+	BL read_PB_edgecp_ASM
+	CMP R1,#0x04
+	BEQ _start
 	BL ARM_TIM_read_INT_ASM
 	CMP R2,#1
 	BEQ increment_mili
+	B loop	
+resetBit:
+	MOV R2,#0b001
+	BL ARM_TIM_config_ASM
+	BL PB_clear_edgecp_ASM
 	B loop
+pre_stop:
+	BL PB_clear_edgecp_ASM
+stop:
+	MOV R2,#0b000
+	BL ARM_TIM_config_ASM
+	BL read_PB_edgecp_ASM
+	CMP R1, #0x1
+	BEQ resetBit
+	BL read_PB_edgecp_ASM
+	CMP R1, #0x4
+	BEQ _start
+	B stop
+	
+PB_clear_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	STR R1,[R0]
+	BX LR 
+	
+read_PB_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	BX LR
 	
 ARM_TIM_config_ASM:
 	PUSH {R3-R4}
