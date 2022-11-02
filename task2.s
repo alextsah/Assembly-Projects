@@ -45,8 +45,8 @@ _start:
 	BL PB_clear_edgecp_ASM
 check_start:
 	BL read_PB_edgecp_ASM
-	CMP R1,#0x01
-	BEQ pre_begin
+	TST R1,#0x01
+	BNE pre_begin
 	B check_start
 start:
 	MOV R5,#1
@@ -72,11 +72,11 @@ begin:
 	BL ARM_TIM_config_ASM
 loop:
 	BL read_PB_edgecp_ASM
-	CMP R1,#0x02
-	BEQ pre_stop
+	TST R1,#0x02
+	BNE pre_stop
 	BL read_PB_edgecp_ASM
-	CMP R1,#0x04
-	BEQ _start
+	TST R1,#0x04
+	BNE _start
 	BL ARM_TIM_read_INT_ASM
 	CMP R2,#1
 	BEQ increment_mili
@@ -92,11 +92,11 @@ stop:
 	MOV R2,#0b000
 	BL ARM_TIM_config_ASM
 	BL read_PB_edgecp_ASM
-	CMP R1, #0x1
-	BEQ resetBit
+	TST R1, #0x1
+	BNE resetBit
 	BL read_PB_edgecp_ASM
-	CMP R1, #0x4
-	BEQ _start
+	TST R1, #0x4
+	BNE _start
 	B stop
 	
 PB_clear_edgecp_ASM:
