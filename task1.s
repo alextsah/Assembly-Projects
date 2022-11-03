@@ -25,7 +25,8 @@ _start:
 	BL PB_clear_edgecp_ASM
 
 read_slider_switches_ASM:
-
+	BL read_PB_edgecp_ASM
+	MOV R5,R1
 return2:
     LDR R3, =SW_MEMORY
     LDR R2, [R3]
@@ -34,7 +35,10 @@ return2:
 	MOV R0,#0x30
 	BL HEX_flood_ASM 
     B write_LEDs_ASM
-
+	
+reset:
+	BL PB_clear_edgecp_ASM
+	B read_slider_switches_ASM 
 write_LEDs_ASM:
     LDR R3, =LED_MEMORY
     STR R2, [R3]
@@ -42,7 +46,9 @@ write_LEDs_ASM:
 	MOV R0,R1
 	MOV R1,R2
 	BL HEX_write_ASM
-	B _start
+	CMP R1,R5
+	BNE reset
+	B read_slider_switches_ASM
 	
 read_PB_edgecp_ASM:
 	LDR R0,=PBEDGECAPTURE
