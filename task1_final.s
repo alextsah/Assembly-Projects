@@ -22,12 +22,13 @@ HEX3_display: .word 0x7F000000
 HEX4_display: .word 0x0000007F
 HEX5_display: .word 0x00007F00
 _start:
+	BL PB_clear_edgecp_ASM
 
 read_slider_switches_ASM:
+
 return2:
     LDR R3, =SW_MEMORY
     LDR R2, [R3]
-	
 	CMP R2,#0x200
 	BGE clear_all
 	MOV R0,#0x30
@@ -37,17 +38,22 @@ return2:
 write_LEDs_ASM:
     LDR R3, =LED_MEMORY
     STR R2, [R3]
-	B read_PB_data_ASM
-	
-write_HEX:
+	BL read_PB_edgecp_ASM
+	MOV R0,R1
 	MOV R1,R2
 	BL HEX_write_ASM
-    B read_slider_switches_ASM
+	B _start
 	
-read_PB_data_ASM:
-	LDR R0,=PUSHBUTTONS
-	LDR R0,[R0]
-	B write_HEX
+read_PB_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	BX LR
+	
+PB_clear_edgecp_ASM:
+	LDR R0,=PBEDGECAPTURE
+	LDR R1,[R0]
+	STR R1,[R0]
+	BX LR
 	
 clear_all:
 	MOV R0,#0x3F
