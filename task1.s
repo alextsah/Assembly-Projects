@@ -53,6 +53,32 @@ VGA_write_char_ASM:
 		STRB R6,[R9] // c -> 0xc9000000 | (y << 7) | x
 		pop {r4-r9,lr}
 		BX LR
+
+VGA_clear_charbuff_ASM:
+		push {r2,lr}
+		MOV R0,#0 //x=0
+		MOV R1,#0 //y=0
+		MOV R2,#0 //c=0
+		BL VGA_write_char_ASM
+LOOP_X_2:
+		B START_2
+increment_x_2:
+		ADD R0,R0,#1 //increment x
+		B START_2
+START_2:
+		MOV R1,#0 //reset y
+		CMP R0,#80
+		BEQ STOP_2
+		B LOOP_Y_2
+	LOOP_Y_2:
+		CMP R1,#60
+		BEQ increment_x_2
+		BL VGA_write_char_ASM
+		ADD R1,R1,#1
+		B LOOP_Y_2
+STOP_2:
+		pop {r2,lr}
+		BX LR
 		
 draw_test_screen:
         push    {r4, r5, r6, r7, r8, r9, r10, lr}
