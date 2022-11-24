@@ -11,8 +11,8 @@ VGA_draw_point_ASM:
 		LDR R7,=pixel_buffer
 		LSL R4,R4,#1 //(x << 1)
 		LSL R5,R5,#10 //(y << 10)
-		ADD R8,R4,R5 // (y << 10) | (x << 1)
-		ADD R9,R8,R7 //0xc8000000 | (y << 10) | (x << 1)
+		AND R8,R4,R5 // (y << 10) | (x << 1)
+		AND R9,R8,R7 //0xc8000000 | (y << 10) | (x << 1)
 		STR R9,[R7] // R9 -> pixel_buffer
 		pop {r4-r9,lr}
 		BX LR
@@ -20,6 +20,7 @@ VGA_draw_point_ASM:
 VGA_clear_pixelbuff_ASM:
 		MOV R2,#0
 		BL VGA_draw_point_ASM
+		BX LR
 draw_test_screen:
         push    {r4, r5, r6, r7, r8, r9, r10, lr}
         bl      VGA_clear_pixelbuff_ASM
