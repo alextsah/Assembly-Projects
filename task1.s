@@ -2,7 +2,9 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
 _start:
-
+		bl      draw_test_screen
+end:
+        b       end
 VGA_draw_point_ASM:
 		push {r4-r9,lr}
 		MOV R4,R0 //x
@@ -18,9 +20,33 @@ VGA_draw_point_ASM:
 		BX LR
 
 VGA_clear_pixelbuff_ASM:
+		push {r2,lr}
 		MOV R2,#0
 		BL VGA_draw_point_ASM
+		pop {r2,lr}
 		BX LR
+
+VGA_write_char_ASM:
+		push {r4-r9,lr}
+		MOV R4,R0 //x
+		MOV R5,R1 //y
+		LDR R6,=character_buffer
+		LDR R7,=pixel_buffer
+		LSL R4,R4,#1 //(x << 1)
+		LSL R5,R5,#10 //(y << 10)
+		AND R8,R4,R5 // (y << 10) | (x << 1)
+		AND R9,R8,R7 //0xc8000000 | (y << 10) | (x << 1)
+		STR R6,[R9]
+		pop {r4-r9,lr}
+		BX LR
+		
+VGA_clear_charbuff_ASM:
+		push {r3,lr}
+		MOV R3,#0
+		BL VGA_write_char_ASM
+		pop {r3,lr}
+		BX LR
+		
 draw_test_screen:
         push    {r4, r5, r6, r7, r8, r9, r10, lr}
         bl      VGA_clear_pixelbuff_ASM
@@ -30,6 +56,7 @@ draw_test_screen:
         ldr     r9, .draw_test_screen_L8+4
         ldr     r8, .draw_test_screen_L8+8
         b       .draw_test_screen_L2
+		
 .draw_test_screen_L7:
         add     r6, r6, #1
         cmp     r6, #320
