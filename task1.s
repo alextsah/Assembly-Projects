@@ -43,6 +43,17 @@ STOP:
 		pop {r2,lr}
 		BX LR
 		
+VGA_write_char_ASM:
+		push {r4-r9,lr}
+		MOV R6,R2 //c
+		LDR R7,=character_buffer
+		LSL R5,R1,#7 //(y << 7)
+		ADD R8,R5,R0 //(y << 7) | x
+		ADD R9,R8,R7 //0xc9000000 | (y << 7) | x
+		STRB R6,[R9] // c -> 0xc9000000 | (y << 7) | x
+		pop {r4-r9,lr}
+		BX LR
+		
 draw_test_screen:
         push    {r4, r5, r6, r7, r8, r9, r10, lr}
         bl      VGA_clear_pixelbuff_ASM
