@@ -6,7 +6,6 @@ _start:
         bl      input_loop
 end:
         b       end
-
 @ TODO: copy VGA driver here.
 VGA_draw_point_ASM:
 		push {r4-r9,lr}
@@ -85,22 +84,23 @@ STOP_2:
 
 @ TODO: insert PS/2 driver here.
 read_PS2_data_ASM:
-		PUSH {R1-R3,LR}
- 		LSR R1,R0,#15
-		AND R2,R1,#0b1
-		CMP R1,#1
-		BEQ VALID
-		B NOT_VALID
+		PUSH {R1-R5,LR}
+		LDR R1,=PS2_data
+		LDR R1,[R1]
+ 		LSR R2,R1,#15
+		TST R2,#0b1
+		BEQ NOT_VALID
+		B VALID
 VALID:
-		LDR R3,[R0]
-		STR R3,[R0]
+		STRB R1,[R0]
 		MOV R0,#1
-		POP {R1-R3,LR}
+		POP {R1-R5,LR}
 		BX LR
 NOT_VALID:
 		MOV R0,#0
-		POP {R1-R3,LR}
+		POP {R1-R5,LR}
 		BX LR
+		
 write_hex_digit:
         push    {r4, lr}
         cmp     r2, #9
