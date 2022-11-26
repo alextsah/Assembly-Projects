@@ -25,7 +25,7 @@ DRAW_X_GRID:
 	PUSH {R0-R2,LR}
 	MOV R0,#0
 	MOV R1,#0
-	MOV R2,#0xffffffff
+	MOV R2,#0x0
 LOOP_X_GRID:
 	CMP R1,#240
 	BEQ NEXT_X_LINE
@@ -48,7 +48,7 @@ DRAW_Y_GRID:
 	PUSH {R0-R2,LR}
 	MOV R0,#0
 	MOV R1,#0
-	MOV R2,#0xffffffff
+	MOV R2,#0x0
 LOOP_Y_GRID:
 	CMP R0,#320
 	BEQ NEXT_Y_LINE
@@ -83,7 +83,7 @@ VGA_fill_ASM:
 		push {r2,lr}
 		MOV R0,#0 //x=0
 		MOV R1,#0 //y=0
-		MOV R2,#0 //c=0
+		MOV R2,#0xffffffff //c=0
 		BL VGA_draw_point_ASM
 LOOP_X:
 		B START
