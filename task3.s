@@ -1,9 +1,72 @@
 .equ pixel_buffer,0xc8000000
+input_mazes:// First Obstacle Course
+            .word 2,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,1,0,0,0,0,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,1,1
+            .word 0,1,0,1,1,1,0,0,0,1,1,1
+            .word 0,0,0,1,1,1,0,0,0,1,1,1
+            .word 1,1,1,1,1,1,0,0,1,0,0,0
+            .word 1,1,1,1,1,1,0,1,0,0,0,0
+            .word 1,1,1,1,1,1,0,0,0,0,0,3
 .global _start
 _start:
 	BL VGA_fill_ASM
+	BL draw_grid_ASM
 	B end
 	
+draw_grid_ASM:
+	PUSH {LR}
+	BL DRAW_Y_GRID
+	BL DRAW_X_GRID
+	POP {LR}
+	BX LR
+DRAW_X_GRID:
+	PUSH {R0-R2,LR}
+	MOV R0,#0
+	MOV R1,#0
+	MOV R2,#0xffffffff
+LOOP_X_GRID:
+	CMP R1,#240
+	BEQ NEXT_X_LINE
+	BL VGA_draw_point_ASM
+	ADD R1,R1,#1
+	B LOOP_X_GRID
+	
+NEXT_X_LINE:
+	CMP R0,#260
+	BGT RETURN_DRAW_X
+	ADD R0,R0,#26
+	MOV R1,#0
+	B LOOP_X_GRID
+
+RETURN_DRAW_X:
+	POP {R0-R2,LR}
+	BX LR
+	
+DRAW_Y_GRID:
+	PUSH {R0-R2,LR}
+	MOV R0,#0
+	MOV R1,#0
+	MOV R2,#0xffffffff
+LOOP_Y_GRID:
+	CMP R0,#320
+	BEQ NEXT_Y_LINE
+	BL VGA_draw_point_ASM
+	ADD R0,R0,#1
+	B LOOP_Y_GRID
+	
+NEXT_Y_LINE:
+	CMP R1,#208
+	BEQ RETURN_DRAW_Y
+	ADD R1,R1,#26
+	MOV R0,#0
+	B LOOP_Y_GRID
+	
+RETURN_DRAW_Y:
+	POP {R0-R2,LR}
+	BX LR
+
 VGA_draw_point_ASM:
 		push {r4-r9,lr}
 		MOV R6,R2 //c
