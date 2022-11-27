@@ -17,35 +17,39 @@ _start:
 	BL draw_grid_ASM
 	BL draw_ampersand_ASM
 	BL draw_exit_ASM
-	MOV R0,#0
-	MOV R1,#0
-	BL draw_obstacle_block
+	MOV R0,#5 //x
+	MOV R1,#5 //y
+	BL draw_block
 	B end
 	
-draw_obstacle_block:
-		push {lr}
-		MOV R0,#78 //x=0
-		MOV R1,#182 //y=0
+draw_block:
+		push {R3-R6,lr}
+		MOV R6,#26
+		MUL R0,R0,R6
+		MUL R1,R1,R6
+		MOV R5,R1
+		SUB R3,R1,#26
+		ADD R4,R0,#26
 		MOV R2,#0xffffffff //c=0
 		BL VGA_draw_point_ASM
 LOOP_X_obstacles:
 		B START_obstacles
 increment_x_obstacles:
-		MOV R1,#156 //=R1-26
+		MOV R1,R3 //=R1-26
 		ADD R0,R0,#1 //increment x
 		B START_obstacles
 START_obstacles:
-		CMP R0,#104 //=R0+26
+		CMP R0,R4 //=R0+26
 		BEQ STOP_obstacles
 		B LOOP_Y_obstacles
 	LOOP_Y_obstacles:
-		CMP R1,#182 //=R1
+		CMP R1,R5 //=R1
 		BEQ increment_x_obstacles
 		BL VGA_draw_point_ASM
 		ADD R1,R1,#1
 		B LOOP_Y_obstacles
 STOP_obstacles:
-		pop {lr}
+		pop {R3-R6,lr}
 		BX LR
 draw_exit_ASM:
 	push {r0-r2,lr}
