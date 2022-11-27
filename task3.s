@@ -1,4 +1,5 @@
 .equ pixel_buffer,0xc8000000
+.equ character_buffer,0xc9000000
 input_mazes:// First Obstacle Course
             .word 2,1,0,1,1,1,0,0,0,1,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
@@ -11,10 +12,66 @@ input_mazes:// First Obstacle Course
             .word 1,1,1,1,1,1,0,0,0,0,0,3
 .global _start
 _start:
+	BL VGA_clear_charbuff_ASM
 	BL VGA_fill_ASM
 	BL draw_grid_ASM
+	BL VGA_initialize_player
+	BL VGA_initialize_exit
 	B end
 	
+	
+VGA_initialize_exit:
+	push {r0-r2,lr}
+	MOV R0,#75
+	MOV R1,#55
+	MOV R2,#88
+	BL VGA_write_char_ASM
+	pop {r0-r2,lr}
+	BX LR
+VGA_initialize_player:
+	push {r0-r2,lr}
+	MOV R0,#3
+	MOV R1,#3
+	MOV R2,#83
+	BL VGA_write_char_ASM
+	pop {r0-r2,lr}
+	BX LR 
+VGA_write_char_ASM:
+		push {r4-r9,lr}
+		MOV R6,R2 //c
+		LDR R7,=character_buffer
+		LSL R5,R1,#7 //(y << 7)
+		ADD R8,R5,R0 //(y << 7) | x
+		ADD R9,R8,R7 //0xc9000000 | (y << 7) | x
+		STRB R6,[R9] // c -> 0xc9000000 | (y << 7) | x
+		pop {r4-r9,lr}
+		BX LR
+
+VGA_clear_charbuff_ASM:
+		push {r2,lr}
+		MOV R0,#0 //x=0
+		MOV R1,#0 //y=0
+		MOV R2,#0 //c=0
+		BL VGA_write_char_ASM
+LOOP_X_2:
+		B START_2
+increment_x_2:
+		ADD R0,R0,#1 //increment x
+		B START_2
+START_2:
+		MOV R1,#0 //reset y
+		CMP R0,#80
+		BEQ STOP_2
+		B LOOP_Y_2
+	LOOP_Y_2:
+		CMP R1,#60
+		BEQ increment_x_2
+		BL VGA_write_char_ASM
+		ADD R1,R1,#1
+		B LOOP_Y_2
+STOP_2:
+		pop {r2,lr}
+		BX LR
 draw_grid_ASM:
 	PUSH {LR}
 	BL DRAW_Y_GRID
@@ -25,7 +82,7 @@ DRAW_X_GRID:
 	PUSH {R0-R2,LR}
 	MOV R0,#0
 	MOV R1,#0
-	MOV R2,#0x0
+	MOV R2,#0xffffffff
 LOOP_X_GRID:
 	CMP R1,#235
 	BEQ NEXT_X_LINE
@@ -48,7 +105,7 @@ DRAW_Y_GRID:
 	PUSH {R0-R2,LR}
 	MOV R0,#0
 	MOV R1,#0
-	MOV R2,#0x0
+	MOV R2,#0xffffffff
 LOOP_Y_GRID:
 	CMP R0,#312
 	BEQ NEXT_Y_LINE
@@ -83,7 +140,7 @@ VGA_fill_ASM:
 		push {r2,lr}
 		MOV R0,#0 //x=0
 		MOV R1,#0 //y=0
-		MOV R2,#0xffffffff //c=0
+		MOV R2,#0x0 //c=0
 		BL VGA_draw_point_ASM
 LOOP_X:
 		B START
