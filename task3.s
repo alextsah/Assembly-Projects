@@ -1,7 +1,7 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
 input_mazes:// First Obstacle Course
-            .word 2,1,0,1,1,1,1,1,0,1,0,1
+            .word 0,1,0,1,1,1,1,1,0,1,0,1
             .word 0,1,0,0,0,1,0,0,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,1
@@ -17,10 +17,10 @@ _start:
 	BL draw_grid_ASM
 	BL draw_ampersand_ASM
 	BL draw_exit_ASM
-	BL get_points
+	BL draw_obstacles_ASM
 	B end
 	
-get_points:
+draw_obstacles_ASM:
 	PUSH {R3-R11, LR}
 	MOV R0,#-1 //x
 	MOV R1,#1 //y
