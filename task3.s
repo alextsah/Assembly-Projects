@@ -15,12 +15,39 @@ _start:
 	BL VGA_clear_charbuff_ASM
 	BL VGA_fill_ASM
 	BL draw_grid_ASM
-	BL VGA_initialize_player
-	BL VGA_initialize_exit
+	BL draw_ampersand_ASM
+	BL draw_exit_ASM
+	MOV R0,#0
+	MOV R1,#0
+	BL draw_obstacle_block
 	B end
 	
-	
-VGA_initialize_exit:
+draw_obstacle_block:
+		push {lr}
+		MOV R0,#78 //x=0
+		MOV R1,#182 //y=0
+		MOV R2,#0xffffffff //c=0
+		BL VGA_draw_point_ASM
+LOOP_X_obstacles:
+		B START_obstacles
+increment_x_obstacles:
+		MOV R1,#156 //=R1-26
+		ADD R0,R0,#1 //increment x
+		B START_obstacles
+START_obstacles:
+		CMP R0,#104 //=R0+26
+		BEQ STOP_obstacles
+		B LOOP_Y_obstacles
+	LOOP_Y_obstacles:
+		CMP R1,#182 //=R1
+		BEQ increment_x_obstacles
+		BL VGA_draw_point_ASM
+		ADD R1,R1,#1
+		B LOOP_Y_obstacles
+STOP_obstacles:
+		pop {lr}
+		BX LR
+draw_exit_ASM:
 	push {r0-r2,lr}
 	MOV R0,#75
 	MOV R1,#55
@@ -28,7 +55,7 @@ VGA_initialize_exit:
 	BL VGA_write_char_ASM
 	pop {r0-r2,lr}
 	BX LR
-VGA_initialize_player:
+draw_ampersand_ASM:
 	push {r0-r2,lr}
 	MOV R0,#3
 	MOV R1,#3
