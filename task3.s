@@ -1,15 +1,15 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
 input_mazes:// First Obstacle Course
-            .word 2,1,0,1,1,1,0,0,0,1,0,1
-            .word 0,1,0,1,1,1,0,0,0,1,0,1
-            .word 0,1,0,0,0,0,0,0,0,1,0,1
-            .word 0,1,0,1,1,1,0,0,0,1,1,1
-            .word 0,1,0,1,1,1,0,0,0,1,1,1
-            .word 0,0,0,1,1,1,0,0,0,1,1,1
-            .word 1,1,1,1,1,1,0,0,1,0,0,0
-            .word 1,1,1,1,1,1,0,1,0,0,0,0
-            .word 1,1,1,1,1,1,0,0,0,0,0,3
+            .word 2,1,0,1,1,1,1,1,0,1,0,1
+            .word 0,1,0,0,0,1,0,0,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,0
+            .word 0,0,0,1,0,0,0,1,0,1,1,1
+            .word 1,1,1,1,1,1,0,1,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -17,10 +17,67 @@ _start:
 	BL draw_grid_ASM
 	BL draw_ampersand_ASM
 	BL draw_exit_ASM
-	MOV R0,#5 //x
-	MOV R1,#5 //y
-	BL draw_block
+	BL get_points
 	B end
+	
+get_points:
+	PUSH {R3-R11, LR}
+	MOV R0,#-1 //x
+	MOV R1,#1 //y
+	LDR R3,=input_mazes
+	MOV R4,#0
+	MOV R5,#4
+LOOP:
+	ADD R0,R0,#1
+	MUL R7,R4,R5
+	ADD R8,R3,R7
+	LDR R6,[R8],#0
+	CMP R6,#1
+	BEQ setup
+continue:
+	ADD R4,R4,#1
+	CMP R4,#108
+	BEQ return 
+	CMP R4,#12
+	BLEQ reset_x_y
+	CMP R4,#24
+	BLEQ reset_x_y
+	CMP R4,#36
+	BLEQ reset_x_y
+	CMP R4,#48
+	BLEQ reset_x_y
+	CMP R4,#60
+	BLEQ reset_x_y
+	CMP R4,#72
+	BLEQ reset_x_y
+	CMP R4,#84
+	BLEQ reset_x_y
+	CMP R4,#96
+	BLEQ reset_x_y
+	CMP R4,#108
+	BLEQ reset_x_y
+	MOV R7,#0
+	B LOOP
+
+return:
+	POP {R3-R11,LR}
+	BX LR 
+
+reset_x_y:
+	PUSH {LR}
+	MOV R0,#-1
+	ADD R1,R1,#1
+	POP {LR}
+	BX LR 
+	
+setup:
+	MOV R10,R0
+	MOV R11,R1
+	BL draw_block
+	MOV R0,R10
+	MOV R1,R11
+	B continue
+	
 	
 draw_block:
 		push {R3-R6,lr}
@@ -51,6 +108,8 @@ START_obstacles:
 STOP_obstacles:
 		pop {R3-R6,lr}
 		BX LR
+		
+		
 draw_exit_ASM:
 	push {r0-r2,lr}
 	MOV R0,#75
@@ -59,6 +118,8 @@ draw_exit_ASM:
 	BL VGA_write_char_ASM
 	pop {r0-r2,lr}
 	BX LR
+	
+	
 draw_ampersand_ASM:
 	push {r0-r2,lr}
 	MOV R0,#3
@@ -67,6 +128,8 @@ draw_ampersand_ASM:
 	BL VGA_write_char_ASM
 	pop {r0-r2,lr}
 	BX LR 
+	
+	
 VGA_write_char_ASM:
 		push {r4-r9,lr}
 		MOV R6,R2 //c
