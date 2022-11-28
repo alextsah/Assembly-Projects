@@ -19,7 +19,7 @@ _start:
 	BL draw_ampersand_ASM
 	BL draw_exit_ASM
 	BL draw_obstacles_ASM
-	//BL read_PS2_data_ASM
+	BL read_PS2_data_ASM
 	B end
 	
 read_PS2_data_ASM:
@@ -32,10 +32,12 @@ read_again:
 		LDR R3,[R3]
  		LSR R4,R3,#15
 		TST R4,#0b1
-		BEQ determine_action
-		B read_again
+		BEQ read_again
+		B determine_action
 determine_action:
-		CMP R3,#0x75
+		LDR R3,=PS2_data
+		LDRB R3,[R3]
+		CMP R3,#0xe0
 		BEQ MOVE_DOWN
 		B read_again
 MOVE_DOWN:
