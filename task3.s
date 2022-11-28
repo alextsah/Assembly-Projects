@@ -1,15 +1,16 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
+.equ PS2_data, 0xff200100
 input_mazes:// First Obstacle Course
-            .word 0,1,0,1,1,1,1,1,0,1,0,1
+            .word 0,1,1,1,1,1,1,1,1,1,0,1
             .word 0,1,0,0,0,1,0,0,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,1
             .word 0,1,0,1,0,1,0,1,0,1,0,0
-            .word 0,0,0,1,0,0,0,1,0,1,1,1
-            .word 1,1,1,1,1,1,0,1,0,0,0,3
+            .word 0,0,0,1,0,0,0,1,0,1,0,1
+            .word 1,1,1,1,1,1,1,1,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -18,7 +19,29 @@ _start:
 	BL draw_ampersand_ASM
 	BL draw_exit_ASM
 	BL draw_obstacles_ASM
+	//BL read_PS2_data_ASM
 	B end
+	
+read_PS2_data_ASM:
+		PUSH {R0-R2,LR}
+		MOV R0,#3
+		MOV R1,#3
+		MOV R2,#83
+read_again:
+		LDR R3,=PS2_data
+		LDR R3,[R3]
+ 		LSR R4,R3,#15
+		TST R4,#0b1
+		BEQ determine_action
+		B read_again
+determine_action:
+		CMP R3,#0x75
+		BEQ MOVE_DOWN
+		B read_again
+MOVE_DOWN:
+		ADD R1,R1,#7
+		BL VGA_write_char_ASM
+		B read_again
 	
 draw_obstacles_ASM:
 	PUSH {R3-R11, LR}
