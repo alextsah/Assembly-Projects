@@ -35,15 +35,21 @@ read_again:
 		BEQ read_again
 		B determine_action
 determine_action:
-		
 		LDR R3,=PS2_data
 		LDRB R3,[R3]
-		CMP R3,#0xe0
+		CMP R3,#0x72
 		BEQ MOVE_DOWN
+		CMP R3,#0x75
+		BEQ MOVE_UP
 		B read_again
 MOVE_DOWN:
 		BL VGA_clear_not_all_charbuff_ASM
 		ADD R1,R1,#7
+		BL VGA_write_char_ASM
+		B read_again
+MOVE_UP:
+		BL VGA_clear_not_all_charbuff_ASM
+		SUB R1,R1,#7
 		BL VGA_write_char_ASM
 		B read_again
 	
