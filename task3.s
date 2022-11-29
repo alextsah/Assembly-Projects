@@ -41,6 +41,10 @@ determine_action:
 		BEQ MOVE_DOWN
 		CMP R3,#0x75
 		BEQ MOVE_UP
+		CMP R3,#0x6b
+		BEQ MOVE_LEFT
+		CMP R3,#0x74
+		BEQ MOVE_RIGHT
 		B read_again
 MOVE_DOWN:
 		BL VGA_clear_not_all_charbuff_ASM
@@ -50,6 +54,16 @@ MOVE_DOWN:
 MOVE_UP:
 		BL VGA_clear_not_all_charbuff_ASM
 		SUB R1,R1,#7
+		BL VGA_write_char_ASM
+		B read_again
+MOVE_LEFT:
+		BL VGA_clear_not_all_charbuff_ASM
+		SUB R0,R0,#7
+		BL VGA_write_char_ASM
+		B read_again
+MOVE_RIGHT:
+		BL VGA_clear_not_all_charbuff_ASM
+		ADD R0,R0,#7
 		BL VGA_write_char_ASM
 		B read_again
 	
