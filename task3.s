@@ -35,12 +35,14 @@ read_again:
 		BEQ read_again
 		B determine_action
 determine_action:
+		
 		LDR R3,=PS2_data
 		LDRB R3,[R3]
 		CMP R3,#0xe0
 		BEQ MOVE_DOWN
 		B read_again
 MOVE_DOWN:
+		BL VGA_clear_not_all_charbuff_ASM
 		ADD R1,R1,#7
 		BL VGA_write_char_ASM
 		B read_again
@@ -167,7 +169,7 @@ VGA_write_char_ASM:
 		BX LR
 
 VGA_clear_charbuff_ASM:
-		push {r2,lr}
+		push {r0-r2,lr}
 		MOV R0,#0 //x=0
 		MOV R1,#0 //y=0
 		MOV R2,#0 //c=0
@@ -189,7 +191,33 @@ START_2:
 		ADD R1,R1,#1
 		B LOOP_Y_2
 STOP_2:
-		pop {r2,lr}
+		pop {r0-r2,lr}
+		BX LR
+		
+VGA_clear_not_all_charbuff_ASM:
+		push {r0-r2,lr}
+		MOV R0,#0 //x=0
+		MOV R1,#0 //y=0
+		MOV R2,#0 //c=0
+		BL VGA_write_char_ASM
+LOOP_X_2_not_all:
+		B START_2_not_all
+increment_x_2_not_all:
+		ADD R0,R0,#1 //increment x
+		B START_2_not_all
+START_2_not_all:
+		MOV R1,#0 //reset y
+		CMP R0,#75
+		BEQ STOP_2_not_all
+		B LOOP_Y_2_not_all
+	LOOP_Y_2_not_all:
+		CMP R1,#55
+		BEQ increment_x_2_not_all
+		BL VGA_write_char_ASM
+		ADD R1,R1,#1
+		B LOOP_Y_2_not_all
+STOP_2_not_all:
+		pop {r0-r2,lr}
 		BX LR
 draw_grid_ASM:
 	PUSH {LR}
