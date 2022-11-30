@@ -2,15 +2,15 @@
 .equ character_buffer,0xc9000000
 .equ PS2_data, 0xff200100
 input_mazes:// First Obstacle Course
-            .word 0,1,1,1,1,1,1,1,1,1,0,1
-            .word 0,1,0,0,0,1,0,0,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,0
-            .word 0,0,0,1,0,0,0,1,0,1,0,1
-            .word 1,1,1,1,1,1,1,1,0,0,0,3
+            .word 0,0,0,0,0,0,0,0,0,0,0,1
+            .word 0,0,0,0,0,0,0,0,0,1,0,1
+            .word 0,0,0,0,0,0,0,1,0,1,0,1
+            .word 0,0,0,0,0,0,0,1,0,1,0,1
+            .word 0,0,0,0,0,0,0,1,0,1,0,1
+            .word 0,0,0,0,0,0,0,1,0,1,0,1
+            .word 0,0,0,0,0,0,0,1,0,1,0,0
+            .word 0,0,0,0,0,0,0,1,0,1,0,1
+            .word 0,0,0,0,0,0,0,0,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -27,6 +27,8 @@ read_PS2_data_ASM:
 		MOV R0,#3
 		MOV R1,#3
 		MOV R2,#83
+		MOV R5,#0
+		MOV R6,#0
 read_again:
 		LDR R3,=PS2_data
 		LDR R3,[R3]
@@ -47,23 +49,178 @@ determine_action:
 		BEQ MOVE_RIGHT
 		B read_again
 MOVE_DOWN:
-		BL VGA_clear_not_all_charbuff_ASM
+		ADD R5,R5,#1
+		CMP R5,#1
+		BEQ mov1
+		CMP R5,#2
+		BEQ mov2
+		CMP R5,#3
+		BEQ mov3
+		CMP R5,#4
+		BEQ mov4
+		CMP R5,#5
+		BEQ mov5
+mov1:
 		ADD R1,R1,#7
+		B move
+mov2:
+		ADD R1,R1,#6
+		B move
+mov3:
+		ADD R1,R1,#6
+		B move
+mov4:
+		ADD R1,R1,#7
+		B move
+mov5:
+		ADD R1,R1,#6
+		B move
+move:
+		BL VGA_clear_not_all_charbuff_ASM
 		BL VGA_write_char_ASM
 		B read_again
 MOVE_UP:
-		BL VGA_clear_not_all_charbuff_ASM
+		SUB R5,R5,#1
+		CMP R5,#1
+		BEQ mov1_up
+		CMP R5,#2
+		BEQ mov2_up
+		CMP R5,#3
+		BEQ mov3_up
+		CMP R5,#4
+		BEQ mov4_up
+		CMP R5,#5
+		BEQ mov5_up
+mov1_up:
 		SUB R1,R1,#7
+		B move_up
+mov2_up:
+		SUB R1,R1,#6
+		B move_up
+mov3_up:
+		SUB R1,R1,#6
+		B move_up
+mov4_up:
+		SUB R1,R1,#7
+		B move_up
+mov5_up:
+		SUB R1,R1,#6
+		B move_up
+move_up:
+		BL VGA_clear_not_all_charbuff_ASM
 		BL VGA_write_char_ASM
 		B read_again
 MOVE_LEFT:
-		BL VGA_clear_not_all_charbuff_ASM
+		SUB R6,R6,#1
+		CMP R6,#1
+		BEQ mov1_left
+		CMP R6,#2
+		BEQ mov2_left
+		CMP R6,#3
+		BEQ mov3_left
+		CMP R6,#4
+		BEQ mov4_left
+		CMP R6,#5
+		BEQ mov5_left
+		CMP R6,#6
+		BEQ mov6_left
+		CMP R6,#7
+		BEQ mov7_left
+		CMP R6,#8
+		BEQ mov8_left
+		CMP R6,#9
+		BEQ mov9_left
+		CMP R6,#10
+		BEQ mov10_left
+mov1_left:
+		SUB R0,R0,#6
+		B move_left
+mov2_left:
 		SUB R0,R0,#7
+		B move_left
+mov3_left:
+		SUB R0,R0,#6
+		B move_left
+mov4_left:
+		SUB R0,R0,#7
+		B move_left
+mov5_left:
+		SUB R0,R0,#6
+		B move_left
+mov6_left:
+		SUB R0,R0,#7
+		B move_left
+mov7_left:
+		SUB R0,R0,#6
+		B move_left
+mov8_left:
+		SUB R0,R0,#7
+		B move_left
+mov9_left:
+		SUB R0,R0,#6
+		B move_left
+mov10_left:
+		SUB R0,R0,#7
+		B move_left
+move_left:
+		BL VGA_clear_not_all_charbuff_ASM
 		BL VGA_write_char_ASM
 		B read_again
+		
 MOVE_RIGHT:
-		BL VGA_clear_not_all_charbuff_ASM
+		ADD R6,R6,#1
+		CMP R6,#1
+		BEQ mov1_right
+		CMP R6,#2
+		BEQ mov2_right
+		CMP R6,#3
+		BEQ mov3_right
+		CMP R6,#4
+		BEQ mov4_right
+		CMP R6,#5
+		BEQ mov5_right
+		CMP R6,#6
+		BEQ mov6_right
+		CMP R6,#7
+		BEQ mov7_right
+		CMP R6,#8
+		BEQ mov8_right
+		CMP R6,#9
+		BEQ mov9_right
+		CMP R6,#10
+		BEQ mov10_right
+mov1_right:
 		ADD R0,R0,#7
+		B move_right
+mov2_right:
+		ADD R0,R0,#6
+		B move_right
+mov3_right:
+		ADD R0,R0,#7
+		B move_right
+mov4_right:
+		ADD R0,R0,#6
+		B move_right
+mov5_right:
+		ADD R0,R0,#7
+		B move_right
+mov6_right:
+		ADD R0,R0,#6
+		B move_right
+mov7_right:
+		ADD R0,R0,#7
+		B move_right
+mov8_right:
+		ADD R0,R0,#6
+		B move_right
+mov9_right:
+		ADD R0,R0,#7
+		B move_right
+mov10_right:
+		ADD R0,R0,#6
+		B move_right
+move_right:
+		BL VGA_clear_not_all_charbuff_ASM
 		BL VGA_write_char_ASM
 		B read_again
 	
