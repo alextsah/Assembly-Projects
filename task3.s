@@ -76,7 +76,8 @@ mov5:
 		ADD R1,R1,#6
 		B move
 move:
-		BL VGA_clear_not_all_charbuff_ASM
+		BL VGA_clear_charbuff_ASM
+		BL draw_exit_ASM
 		BL VGA_write_char_ASM
 		B read_again
 MOVE_UP:
@@ -107,7 +108,8 @@ mov5_up:
 		SUB R1,R1,#6
 		B move_up
 move_up:
-		BL VGA_clear_not_all_charbuff_ASM
+		BL VGA_clear_charbuff_ASM
+		BL draw_exit_ASM
 		BL VGA_write_char_ASM
 		B read_again
 MOVE_LEFT:
@@ -163,7 +165,8 @@ mov10_left:
 		SUB R0,R0,#7
 		B move_left
 move_left:
-		BL VGA_clear_not_all_charbuff_ASM
+		BL VGA_clear_charbuff_ASM
+		BL draw_exit_ASM
 		BL VGA_write_char_ASM
 		B read_again
 		
@@ -220,7 +223,8 @@ mov10_right:
 		ADD R0,R0,#6
 		B move_right
 move_right:
-		BL VGA_clear_not_all_charbuff_ASM
+		BL VGA_clear_charbuff_ASM
+		BL draw_exit_ASM
 		BL VGA_write_char_ASM
 		B read_again
 	
