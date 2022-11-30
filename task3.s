@@ -60,6 +60,10 @@ MOVE_DOWN:
 		BEQ mov4
 		CMP R5,#5
 		BEQ mov5
+		CMP R5,#6
+		BEQ mov6
+		CMP R5,#7
+		BEQ mov7
 mov1:
 		ADD R1,R1,#7
 		B move
@@ -73,6 +77,12 @@ mov4:
 		ADD R1,R1,#7
 		B move
 mov5:
+		ADD R1,R1,#6
+		B move
+mov6:
+		ADD R1,R1,#7
+		B move
+mov7:
 		ADD R1,R1,#6
 		B move
 move:
@@ -92,6 +102,10 @@ MOVE_UP:
 		BEQ mov4_up
 		CMP R5,#5
 		BEQ mov5_up
+		CMP R5,#6
+		BEQ mov6_up
+		CMP R5,#7
+		BEQ mov7_up
 mov1_up:
 		SUB R1,R1,#7
 		B move_up
@@ -105,6 +119,12 @@ mov4_up:
 		SUB R1,R1,#7
 		B move_up
 mov5_up:
+		SUB R1,R1,#6
+		B move_up
+mov6_up:
+		SUB R1,R1,#7
+		B move_up
+mov7_up:
 		SUB R1,R1,#6
 		B move_up
 move_up:
@@ -375,31 +395,6 @@ STOP_2:
 		pop {r0-r2,lr}
 		BX LR
 		
-VGA_clear_not_all_charbuff_ASM:
-		push {r0-r2,lr}
-		MOV R0,#0 //x=0
-		MOV R1,#0 //y=0
-		MOV R2,#0 //c=0
-		BL VGA_write_char_ASM
-LOOP_X_2_not_all:
-		B START_2_not_all
-increment_x_2_not_all:
-		ADD R0,R0,#1 //increment x
-		B START_2_not_all
-START_2_not_all:
-		MOV R1,#0 //reset y
-		CMP R0,#75
-		BEQ STOP_2_not_all
-		B LOOP_Y_2_not_all
-	LOOP_Y_2_not_all:
-		CMP R1,#55
-		BEQ increment_x_2_not_all
-		BL VGA_write_char_ASM
-		ADD R1,R1,#1
-		B LOOP_Y_2_not_all
-STOP_2_not_all:
-		pop {r0-r2,lr}
-		BX LR
 draw_grid_ASM:
 	PUSH {LR}
 	BL DRAW_Y_GRID
