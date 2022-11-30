@@ -302,56 +302,56 @@ draw_obstacles_ASM:
 	PUSH {R4-R12, LR}
 	MOV R0,#-1 //x
 	MOV R1,#1 //y
-	LDR R3,=input_mazes
-	MOV R4,#0
-	ADD R12,R4,#108
-	MOV R9,R4
+	LDR R4,=input_mazes //was R3
+	MOV R3,#216
+	ADD R12,R3,#108
+	MOV R9,R3
 	MOV R5,#4
 LOOP:
 	ADD R0,R0,#1
-	MUL R7,R4,R5
-	ADD R8,R3,R7
+	MUL R7,R3,R5
+	ADD R8,R4,R7 //was R3
 	LDR R6,[R8],#0
 	CMP R6,#1
 	BEQ setup
 continue:
-	ADD R4,R4,#1
-	CMP R4,R12
+	ADD R3,R3,#1
+	CMP R3,R12
 	BEQ return 
 	ADD R9,R9,#12
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#12
 	BLEQ reset_x_y
 	ADD R9,R9,#24
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#24
 	BLEQ reset_x_y
 	ADD R9,R9,#36
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#36
 	BLEQ reset_x_y
 	ADD R9,R9,#48
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#48
 	BLEQ reset_x_y
 	ADD R9,R9,#60
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#60
 	BLEQ reset_x_y
 	ADD R9,R9,#72
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#72
 	BLEQ reset_x_y
 	ADD R9,R9,#84
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#84
 	BLEQ reset_x_y
 	ADD R9,R9,#96
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#96
 	BLEQ reset_x_y
 	ADD R9,R9,#108
-	CMP R4,R9
+	CMP R3,R9
 	SUB R9,R9,#108
 	BLEQ reset_x_y
 	MOV R7,#0
