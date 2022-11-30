@@ -2,15 +2,15 @@
 .equ character_buffer,0xc9000000
 .equ PS2_data, 0xff200100
 input_mazes:// First Obstacle Course
-            .word 0,0,0,0,0,0,0,0,0,0,0,1
-            .word 0,0,0,0,0,0,0,0,0,1,0,1
-            .word 0,0,0,0,0,0,0,1,0,1,0,1
-            .word 0,0,0,0,0,0,0,1,0,1,0,1
-            .word 0,0,0,0,0,0,0,1,0,1,0,1
-            .word 0,0,0,0,0,0,0,1,0,1,0,1
-            .word 0,0,0,0,0,0,0,1,0,1,0,0
-            .word 0,0,0,0,0,0,0,1,0,1,0,1
-            .word 0,0,0,0,0,0,0,0,0,0,0,3
+            .word 0,1,1,1,0,1,0,0,0,0,0,1
+            .word 0,1,1,1,0,1,0,0,0,1,0,1
+            .word 0,1,1,1,0,1,0,1,0,1,0,1
+            .word 0,1,1,0,0,1,0,1,0,1,0,1
+            .word 0,0,0,0,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,0,0
+            .word 0,1,0,1,0,1,0,1,0,1,0,0
+            .word 0,0,0,1,0,0,0,1,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -64,11 +64,23 @@ MOVE_DOWN:
 		BEQ mov6
 		CMP R5,#7
 		BEQ mov7
+		CMP R5,#8
+		BEQ possibly_end_2
+possibly_end_2:
+		CMP R6,#11
+		BEQ kill_2
+		B mov7
+kill_2:
+		BL VGA_clear_charbuff_ASM
+		BL draw_exit_ASM
+		ADD R1,R1,#6
+		BL VGA_write_char_ASM
+		B end
 mov1:
-		ADD R1,R1,#7
+		ADD R1,R1,#6
 		B move
 mov2:
-		ADD R1,R1,#6
+		ADD R1,R1,#7
 		B move
 mov3:
 		ADD R1,R1,#6
@@ -106,11 +118,14 @@ MOVE_UP:
 		BEQ mov6_up
 		CMP R5,#7
 		BEQ mov7_up
+		CMP R5,#8
+		BEQ end
+		
 mov1_up:
-		SUB R1,R1,#7
+		SUB R1,R1,#6
 		B move_up
 mov2_up:
-		SUB R1,R1,#6
+		SUB R1,R1,#7
 		B move_up
 mov3_up:
 		SUB R1,R1,#6
@@ -154,6 +169,9 @@ MOVE_LEFT:
 		BEQ mov9_left
 		CMP R6,#10
 		BEQ mov10_left
+		CMP R6,#11
+		BEQ end
+		
 mov1_left:
 		SUB R0,R0,#6
 		B move_left
@@ -212,6 +230,18 @@ MOVE_RIGHT:
 		BEQ mov9_right
 		CMP R6,#10
 		BEQ mov10_right
+		CMP R6,#11
+		BEQ possibly_end
+possibly_end:
+		CMP R5,#8
+		BEQ kill
+		B mov10_right
+kill:
+		BL VGA_clear_charbuff_ASM
+		BL draw_exit_ASM
+		ADD R0,R0,#6
+		BL VGA_write_char_ASM
+		B end
 mov1_right:
 		ADD R0,R0,#7
 		B move_right
@@ -306,7 +336,6 @@ setup:
 	MOV R1,R11
 	B continue
 	
-	
 draw_block:
 		push {R3-R6,lr}
 		MOV R6,#26
@@ -336,8 +365,7 @@ START_obstacles:
 STOP_obstacles:
 		pop {R3-R6,lr}
 		BX LR
-		
-		
+			
 draw_exit_ASM:
 	push {r0-r2,lr}
 	MOV R0,#75
@@ -347,7 +375,6 @@ draw_exit_ASM:
 	pop {r0-r2,lr}
 	BX LR
 	
-	
 draw_ampersand_ASM:
 	push {r0-r2,lr}
 	MOV R0,#3
@@ -356,7 +383,6 @@ draw_ampersand_ASM:
 	BL VGA_write_char_ASM
 	pop {r0-r2,lr}
 	BX LR 
-	
 	
 VGA_write_char_ASM:
 		push {r4-r9,lr}
@@ -459,6 +485,16 @@ VGA_draw_point_ASM:
 		pop {r4-r9,lr}
 		BX LR
 
+get_pixel:
+		MOV R3,#0
+		push {r4-r9,lr}
+		LDR R7,=pixel_buffer
+		LSL R4,R0,#1 //(x << 1)
+		LSL R5,R1,#10 //(y << 10)
+		ADD R8,R4,R5 // (y << 10) | (x << 1)
+		ADD R3,R8,R7 //0xc8000000 | (y << 10) | (x << 1)
+		pop {r4-r9,lr}
+		
 VGA_fill_ASM:
 		push {r2,lr}
 		MOV R0,#0 //x=0
