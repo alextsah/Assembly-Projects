@@ -1,16 +1,36 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
 .equ PS2_data, 0xff200100
-input_mazes:// First Obstacle Course
-            .word 0,1,1,1,0,1,0,0,0,0,0,1
-            .word 0,1,1,1,0,1,0,0,0,1,0,1
-            .word 0,1,1,1,0,1,0,1,0,1,0,1
-            .word 0,1,1,0,0,1,0,1,0,1,0,1
-            .word 0,0,0,0,0,1,0,1,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,1
-            .word 0,1,0,1,0,1,0,1,0,1,0,0
-            .word 0,1,0,1,0,1,0,1,0,1,0,0
-            .word 0,0,0,1,0,0,0,1,0,0,0,3
+input_mazes:
+            .word 2,1,0,1,1,1,0,0,0,0,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,1,0,0,0,0,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,0,0,1,1,1,0,0,0,1,0,1
+            .word 1,1,1,1,1,1,0,0,1,0,0,0
+            .word 1,1,1,1,1,1,0,1,0,0,0,0
+            .word 1,1,1,1,1,1,1,0,0,0,0,3
+            // Third Obstacle Course
+            .word 2,0,0,0,0,1,0,0,0,1,0,1
+            .word 0,1,1,1,0,1,1,1,0,1,0,1
+            .word 0,1,0,0,0,0,0,0,0,0,0,1
+            .word 0,1,1,1,1,1,0,1,1,1,0,1
+            .word 0,1,0,0,0,0,0,0,0,1,0,1
+            .word 1,1,0,1,1,1,1,1,1,1,1,1
+            .word 0,1,0,0,0,0,0,0,0,0,0,1
+            .word 0,1,1,1,0,1,1,1,1,1,0,1
+            .word 0,0,0,0,0,0,0,1,0,0,0,3
+			// Fourth Obstacle Course
+            .word 2,1,0,0,0,0,0,0,0,0,0,1
+            .word 0,1,0,1,1,1,0,1,1,1,0,1
+            .word 0,1,0,0,0,1,0,1,0,1,0,1
+            .word 0,1,0,1,0,1,1,1,0,1,0,1
+            .word 0,0,0,1,0,0,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,1,1,1,1,0,1
+            .word 0,1,0,1,0,0,0,1,0,0,0,1
+            .word 0,1,0,1,1,1,0,1,0,1,1,1
+            .word 0,1,0,1,0,0,0,0,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -279,11 +299,13 @@ move_right:
 		B read_again
 	
 draw_obstacles_ASM:
-	PUSH {R3-R11, LR}
+	PUSH {R4-R12, LR}
 	MOV R0,#-1 //x
 	MOV R1,#1 //y
 	LDR R3,=input_mazes
 	MOV R4,#0
+	ADD R12,R4,#108
+	MOV R9,R4
 	MOV R5,#4
 LOOP:
 	ADD R0,R0,#1
@@ -294,31 +316,49 @@ LOOP:
 	BEQ setup
 continue:
 	ADD R4,R4,#1
-	CMP R4,#108
+	CMP R4,R12
 	BEQ return 
-	CMP R4,#12
+	ADD R9,R9,#12
+	CMP R4,R9
+	SUB R9,R9,#12
 	BLEQ reset_x_y
-	CMP R4,#24
+	ADD R9,R9,#24
+	CMP R4,R9
+	SUB R9,R9,#24
 	BLEQ reset_x_y
-	CMP R4,#36
+	ADD R9,R9,#36
+	CMP R4,R9
+	SUB R9,R9,#36
 	BLEQ reset_x_y
-	CMP R4,#48
+	ADD R9,R9,#48
+	CMP R4,R9
+	SUB R9,R9,#48
 	BLEQ reset_x_y
-	CMP R4,#60
+	ADD R9,R9,#60
+	CMP R4,R9
+	SUB R9,R9,#60
 	BLEQ reset_x_y
-	CMP R4,#72
+	ADD R9,R9,#72
+	CMP R4,R9
+	SUB R9,R9,#72
 	BLEQ reset_x_y
-	CMP R4,#84
+	ADD R9,R9,#84
+	CMP R4,R9
+	SUB R9,R9,#84
 	BLEQ reset_x_y
-	CMP R4,#96
+	ADD R9,R9,#96
+	CMP R4,R9
+	SUB R9,R9,#96
 	BLEQ reset_x_y
-	CMP R4,#108
+	ADD R9,R9,#108
+	CMP R4,R9
+	SUB R9,R9,#108
 	BLEQ reset_x_y
 	MOV R7,#0
 	B LOOP
 
 return:
-	POP {R3-R11,LR}
+	POP {R4-R12,LR}
 	BX LR 
 
 reset_x_y:
