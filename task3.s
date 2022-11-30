@@ -2,6 +2,7 @@
 .equ character_buffer,0xc9000000
 .equ PS2_data, 0xff200100
 input_mazes:
+			// First Obstacle Course 
             .word 2,1,0,1,1,1,0,0,0,0,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
             .word 0,1,0,0,0,0,0,0,0,1,0,1
@@ -11,7 +12,7 @@ input_mazes:
             .word 1,1,1,1,1,1,0,0,1,0,0,0
             .word 1,1,1,1,1,1,0,1,0,0,0,0
             .word 1,1,1,1,1,1,1,0,0,0,0,3
-            // Third Obstacle Course
+            // Second Obstacle Course
             .word 2,0,0,0,0,1,0,0,0,1,0,1
             .word 0,1,1,1,0,1,1,1,0,1,0,1
             .word 0,1,0,0,0,0,0,0,0,0,0,1
@@ -21,7 +22,7 @@ input_mazes:
             .word 0,1,0,0,0,0,0,0,0,0,0,1
             .word 0,1,1,1,0,1,1,1,1,1,0,1
             .word 0,0,0,0,0,0,0,1,0,0,0,3
-			// Fourth Obstacle Course
+			// Third Obstacle Course
             .word 2,1,0,0,0,0,0,0,0,0,0,1
             .word 0,1,0,1,1,1,0,1,1,1,0,1
             .word 0,1,0,0,0,1,0,1,0,1,0,1
@@ -31,6 +32,16 @@ input_mazes:
             .word 0,1,0,1,0,0,0,1,0,0,0,1
             .word 0,1,0,1,1,1,0,1,0,1,1,1
             .word 0,1,0,1,0,0,0,0,0,0,0,3
+			// Fourth Obstacle Course
+            .word 2,0,0,0,0,1,0,1,0,1,0,1
+            .word 1,1,0,1,1,1,0,1,0,1,0,1
+            .word 0,0,0,0,0,0,0,0,0,0,0,1
+            .word 0,1,1,1,0,1,1,1,1,1,0,1
+            .word 0,0,0,1,0,1,0,1,0,0,0,1
+            .word 1,1,0,1,1,1,0,1,1,1,0,1
+            .word 0,0,0,1,0,1,0,0,0,0,0,1
+            .word 0,1,0,1,0,1,0,1,0,1,1,1
+            .word 0,1,0,0,0,1,0,1,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -300,17 +311,50 @@ move_right:
 	
 draw_obstacles_ASM:
 	PUSH {R4-R12, LR}
+	
+read_again_2:
+		LDR R3,=PS2_data
+		LDR R3,[R3]
+ 		LSR R4,R3,#15
+		TST R4,#0b1
+		BEQ read_again_2
+		B determine_action_2
+determine_action_2:
+		LDR R3,=PS2_data
+		LDRB R3,[R3]
+		CMP R3,#0x16
+		BEQ MAZE_1
+		CMP R3,#0x1E
+		BEQ MAZE_2
+		CMP R3,#0x26
+		BEQ MAZE_3
+		CMP R3,#0x35
+		BEQ MAZE_4
+		B read_again
+MAZE_1:
+		MOV R3,#0
+		B make_maze
+MAZE_2:
+		MOV R3,#108
+		B make_maze
+MAZE_3:
+		MOV R3,#216
+		B make_maze
+MAZE_4:
+		MOV R3,#324
+		B make_maze
+		
+make_maze:
 	MOV R0,#-1 //x
 	MOV R1,#1 //y
-	LDR R4,=input_mazes //was R3
-	MOV R3,#216
+	LDR R4,=input_mazes 
 	ADD R12,R3,#108
 	MOV R9,R3
 	MOV R5,#4
 LOOP:
 	ADD R0,R0,#1
 	MUL R7,R3,R5
-	ADD R8,R4,R7 //was R3
+	ADD R8,R4,R7 
 	LDR R6,[R8],#0
 	CMP R6,#1
 	BEQ setup
