@@ -1,8 +1,17 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
 .equ PS2_data, 0xff200100
-input_mazes:
-			// First Obstacle Course 
+input_mazes:// First Obstacle Course
+            .word 2,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,0,1
+            .word 0,1,0,0,0,0,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,0,0,0,1,1,1
+            .word 0,1,0,1,1,1,0,0,0,1,1,1
+            .word 0,0,0,1,1,1,0,0,0,1,1,1
+            .word 1,1,1,1,1,1,0,0,1,0,0,0
+            .word 1,1,1,1,1,1,0,1,0,0,0,0
+            .word 1,1,1,1,1,1,0,0,0,0,0,3
+            // Second Obstacle Course
             .word 2,1,0,1,1,1,0,0,0,0,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
             .word 0,1,0,0,0,0,0,0,0,1,0,1
@@ -12,7 +21,7 @@ input_mazes:
             .word 1,1,1,1,1,1,0,0,1,0,0,0
             .word 1,1,1,1,1,1,0,1,0,0,0,0
             .word 1,1,1,1,1,1,1,0,0,0,0,3
-            // Second Obstacle Course
+            // Third Obstacle Course
             .word 2,0,0,0,0,1,0,0,0,1,0,1
             .word 0,1,1,1,0,1,1,1,0,1,0,1
             .word 0,1,0,0,0,0,0,0,0,0,0,1
@@ -22,7 +31,7 @@ input_mazes:
             .word 0,1,0,0,0,0,0,0,0,0,0,1
             .word 0,1,1,1,0,1,1,1,1,1,0,1
             .word 0,0,0,0,0,0,0,1,0,0,0,3
-			// Third Obstacle Course
+            // Fourth Obstacle Course
             .word 2,1,0,0,0,0,0,0,0,0,0,1
             .word 0,1,0,1,1,1,0,1,1,1,0,1
             .word 0,1,0,0,0,1,0,1,0,1,0,1
@@ -32,7 +41,7 @@ input_mazes:
             .word 0,1,0,1,0,0,0,1,0,0,0,1
             .word 0,1,0,1,1,1,0,1,0,1,1,1
             .word 0,1,0,1,0,0,0,0,0,0,0,3
-			// Fourth Obstacle Course
+            // Fifth Obstacle Course
             .word 2,0,0,0,0,1,0,1,0,1,0,1
             .word 1,1,0,1,1,1,0,1,0,1,0,1
             .word 0,0,0,0,0,0,0,0,0,0,0,1
@@ -42,6 +51,46 @@ input_mazes:
             .word 0,0,0,1,0,1,0,0,0,0,0,1
             .word 0,1,0,1,0,1,0,1,0,1,1,1
             .word 0,1,0,0,0,1,0,1,0,0,0,3
+            // Sixth Obstacle Course
+            .word 2,0,0,0,0,0,0,1,0,0,0,1
+            .word 1,1,0,1,0,1,0,1,0,1,0,1
+            .word 0,0,0,1,0,1,0,0,0,1,0,1
+            .word 1,1,1,1,0,1,1,1,1,1,1,1
+            .word 0,0,0,1,0,0,0,1,0,0,0,1
+            .word 0,1,1,1,0,1,1,1,0,1,0,1
+            .word 0,1,0,0,0,0,0,0,0,1,0,1
+            .word 0,1,0,1,1,1,1,1,1,1,0,1
+            .word 0,0,0,0,0,0,0,0,0,1,0,3
+            // Seventh Obstacle Course
+            .word 2,0,0,0,0,0,0,0,1,0,1,0
+            .word 1,1,1,0,1,1,1,1,1,0,1,0
+            .word 1,0,0,0,0,0,1,0,0,0,0,0
+            .word 1,1,1,1,1,0,1,1,1,0,1,1
+            .word 1,0,0,0,1,0,0,0,0,0,0,0
+            .word 1,0,1,0,1,0,1,0,1,0,1,0
+            .word 1,0,1,0,0,0,1,0,1,0,1,0
+            .word 1,1,1,1,1,1,1,1,1,0,1,0
+            .word 1,0,0,0,0,0,0,0,0,0,1,3
+            // Eighth Obstacle Course
+            .word 2,0,0,0,0,0,0,0,0,0,0,0
+            .word 1,0,1,1,1,1,1,0,1,1,1,0
+            .word 1,0,0,0,1,0,0,0,1,0,0,0
+            .word 1,1,1,1,1,0,1,1,1,1,1,1
+            .word 1,0,0,0,1,0,1,0,0,0,0,0
+            .word 1,0,1,1,1,0,1,1,1,0,1,0
+            .word 1,0,0,0,0,0,0,0,1,0,1,0
+            .word 1,1,1,0,1,0,1,1,1,1,1,0
+            .word 1,0,0,0,1,0,0,0,0,0,0,3
+            // Nineth Obstacle Course
+            .word 2,0,0,0,0,0,1,0,1,0,1,0
+            .word 1,0,1,1,1,1,1,0,1,0,1,0
+            .word 1,0,0,0,1,0,0,0,0,0,0,0
+            .word 1,0,1,0,1,1,1,0,1,1,1,1
+            .word 1,0,1,0,1,0,1,0,0,0,1,0
+            .word 1,0,1,1,1,0,1,0,1,1,1,0
+            .word 1,0,0,0,1,0,0,0,0,0,1,0
+            .word 1,0,1,1,1,0,1,1,1,0,1,0
+            .word 1,0,0,0,0,0,1,0,0,0,0,3
 .global _start
 _start:
 	BL VGA_clear_charbuff_ASM
@@ -764,8 +813,18 @@ determine_action_2:
 		BEQ MAZE_2
 		CMP R3,#0x26
 		BEQ MAZE_3
-		CMP R3,#0x35
+		CMP R3,#0x25
 		BEQ MAZE_4
+		CMP R3,#0x2E
+		BEQ MAZE_5
+		CMP R3,#0x36
+		BEQ MAZE_6
+		CMP R3,#0x3D
+		BEQ MAZE_7
+		CMP R3,#0x3E
+		BEQ MAZE_8
+		CMP R3,#0x46
+		BEQ MAZE_9
 		B read_again
 MAZE_1:
 		MOV R3,#0
@@ -778,6 +837,21 @@ MAZE_3:
 		B make_maze
 MAZE_4:
 		MOV R3,#324
+		B make_maze
+MAZE_5:
+		MOV R3,#432
+		B make_maze
+MAZE_6:
+		MOV R3,#540
+		B make_maze
+MAZE_7:
+		MOV R3,#648
+		B make_maze
+MAZE_8:
+		MOV R3,#756
+		B make_maze
+MAZE_9:
+		MOV R3,#864
 		B make_maze
 		
 make_maze:
