@@ -18,7 +18,7 @@ input_mazes:// First Obstacle Course
             .word 0,0,0,0,0,0,0,0,0,0,0,3
             // Second Obstacle Course
             .word 2,1,0,1,1,1,0,0,0,0,0,1
-            .word 0,1,0,1,1,1,0,0,0,1,0,1
+            .word 1,1,0,1,1,1,0,0,0,1,0,1
             .word 0,1,0,0,0,0,0,0,0,1,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
@@ -171,55 +171,61 @@ kill_2:
 stopgame:
 		BL VGA_clear_charbuff_ASM
 		BL VGA_fill_ASM
-		mov     r2, #70
+		mov     r2, #87
         mov     r1, #5
         mov     r0, #20
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #73
         mov     r1, #5
         mov     r0, #21
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #78
         mov     r1, #5
         mov     r0, #22
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #78
         mov     r1, #5
         mov     r0, #23
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #69
         mov     r1, #5
         mov     r0, #24
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #82
         mov     r1, #5
         mov     r0, #25
         bl      VGA_write_char_ASM
-        mov     r2, #70
+		MOV R5,#1
+		B start_timer
+lose_game:
+		BL VGA_clear_charbuff_ASM
+		BL VGA_fill_ASM
+		mov     r2, #76
         mov     r1, #5
-        mov     r0, #26
+        mov     r0, #20
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #79
         mov     r1, #5
-        mov     r0, #27
+        mov     r0, #21
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #83
         mov     r1, #5
-        mov     r0, #28
+        mov     r0, #22
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #83
         mov     r1, #5
-        mov     r0, #29
+        mov     r0, #23
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #69
         mov     r1, #5
-        mov     r0, #30
+        mov     r0, #24
         bl      VGA_write_char_ASM
-        mov     r2, #70
+        mov     r2, #82
         mov     r1, #5
-        mov     r0, #31
+        mov     r0, #25
         bl      VGA_write_char_ASM
 		MOV R5,#1
+		B start_timer
 start_timer:
 		LDR R1,=20000000
 		MOV R2,#0b001
@@ -232,7 +238,7 @@ loop:
 		B loop
 increment_mili:
 		ADD R5,R5,#1
-		CMP R5,#30
+		CMP R5,#100
 		BEQ _start
 		B start_timer
 		
@@ -274,7 +280,7 @@ mov1:
 reject:
 		SUB R1,R1,#6
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 mov2:
 		ADD R1,R1,#7
 		MOV R8,R0
@@ -291,7 +297,7 @@ mov2:
 reject_2:
 		SUB R1,R1,#7
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 mov3:
 		ADD R1,R1,#6
 		MOV R8,R0
@@ -308,7 +314,7 @@ mov3:
 reject_3:
 		SUB R1,R1,#6
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 mov4:
 		ADD R1,R1,#7
 		MOV R8,R0
@@ -325,7 +331,7 @@ mov4:
 reject_4:
 		SUB R1,R1,#7
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 mov5:
 		ADD R1,R1,#6
 		MOV R8,R0
@@ -342,7 +348,7 @@ mov5:
 reject_5:
 		SUB R1,R1,#6
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 mov6:
 		ADD R1,R1,#7
 		MOV R8,R0
@@ -359,7 +365,7 @@ mov6:
 reject_6:
 		SUB R1,R1,#7
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 mov7:
 		ADD R1,R1,#6
 		MOV R8,R0
@@ -376,7 +382,7 @@ mov7:
 reject_7:
 		SUB R1,R1,#6
 		SUB R5,R5,#1
-		B read_again
+		B lose_game
 move:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -417,7 +423,7 @@ mov1_up:
 reject_up_1:
 		ADD R1,R1,#6
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 mov2_up:
 		SUB R1,R1,#7
 		MOV R8,R0
@@ -434,7 +440,7 @@ mov2_up:
 reject_up_2:
 		ADD R1,R1,#7
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 mov3_up:
 		SUB R1,R1,#6
 		MOV R8,R0
@@ -451,7 +457,7 @@ mov3_up:
 reject_up_3:
 		ADD R1,R1,#6
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 mov4_up:
 		SUB R1,R1,#7
 		MOV R8,R0
@@ -468,7 +474,7 @@ mov4_up:
 reject_up_4:
 		ADD R1,R1,#7
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 mov5_up:
 		SUB R1,R1,#6
 		MOV R8,R0
@@ -485,7 +491,7 @@ mov5_up:
 reject_up_5:
 		ADD R1,R1,#6
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 mov6_up:
 		SUB R1,R1,#7
 		MOV R8,R0
@@ -502,7 +508,7 @@ mov6_up:
 reject_up_6:
 		ADD R1,R1,#7
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 mov7_up:
 		SUB R1,R1,#6
 		MOV R8,R0
@@ -519,7 +525,7 @@ mov7_up:
 reject_up_7:
 		ADD R1,R1,#6
 		ADD R5,R5,#1
-		B read_again
+		B lose_game
 move_up:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -566,7 +572,7 @@ mov1_left:
 reject_left_1:
 		ADD R0,R0,#6
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov2_left:
 		SUB R0,R0,#7
 		MOV R8,R0
@@ -583,7 +589,7 @@ mov2_left:
 reject_left_2:
 		ADD R0,R0,#7
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov3_left:
 		SUB R0,R0,#6
 		MOV R8,R0
@@ -600,7 +606,7 @@ mov3_left:
 reject_left_3:
 		ADD R0,R0,#6
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov4_left:
 		SUB R0,R0,#7
 		MOV R8,R0
@@ -617,7 +623,7 @@ mov4_left:
 reject_left_4:
 		ADD R0,R0,#7
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov5_left:
 		SUB R0,R0,#6
 		MOV R8,R0
@@ -634,7 +640,7 @@ mov5_left:
 reject_left_5:
 		ADD R0,R0,#6
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov6_left:
 		SUB R0,R0,#7
 		MOV R8,R0
@@ -651,7 +657,7 @@ mov6_left:
 reject_left_6:
 		ADD R0,R0,#7
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov7_left:
 		SUB R0,R0,#6
 		MOV R8,R0
@@ -668,7 +674,7 @@ mov7_left:
 reject_left_7:
 		ADD R0,R0,#6
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov8_left:
 		SUB R0,R0,#7
 		MOV R8,R0
@@ -685,7 +691,7 @@ mov8_left:
 reject_left_8:
 		ADD R0,R0,#7
 		ADD R6,R6,#1
-		B read_again
+		B lose_game
 mov9_left:
 		SUB R0,R0,#6
 		MOV R8,R0
@@ -698,7 +704,7 @@ mov9_left:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_left
-		B reject_left_7
+		B lose_game
 mov10_left:
 		SUB R0,R0,#7
 		MOV R8,R0
@@ -711,7 +717,7 @@ mov10_left:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_left
-		B reject_left_8
+		B lose_game
 move_left:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -768,7 +774,7 @@ mov1_right:
 reject_right_1:
 		SUB R0,R0,#7
 		SUB R6,R6,#1
-		B read_again
+		B lose_game
 mov2_right:
 		ADD R0,R0,#6
 		MOV R8,R0
@@ -785,7 +791,7 @@ mov2_right:
 reject_right_2:
 		SUB R0,R0,#6
 		SUB R6,R6,#1
-		B read_again
+		B lose_game
 mov3_right:
 		ADD R0,R0,#7
 		MOV R8,R0
@@ -798,7 +804,7 @@ mov3_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_1
+		B lose_game
 mov4_right:
 		ADD R0,R0,#6
 		MOV R8,R0
@@ -811,7 +817,7 @@ mov4_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_2
+		B lose_game
 mov5_right:
 		ADD R0,R0,#7
 		MOV R8,R0
@@ -824,7 +830,7 @@ mov5_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_1
+		B lose_game
 mov6_right:
 		ADD R0,R0,#6
 		MOV R8,R0
@@ -837,7 +843,7 @@ mov6_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_2
+		B lose_game
 mov7_right:
 		ADD R0,R0,#7
 		MOV R8,R0
@@ -850,7 +856,7 @@ mov7_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_1
+		B lose_game
 mov8_right:
 		ADD R0,R0,#6
 		MOV R8,R0
@@ -863,7 +869,7 @@ mov8_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_2
+		B lose_game
 mov9_right:
 		ADD R0,R0,#7
 		MOV R8,R0
@@ -876,7 +882,7 @@ mov9_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_1
+		B lose_game
 mov10_right:
 		ADD R0,R0,#6
 		MOV R8,R0
@@ -889,7 +895,7 @@ mov10_right:
 		MOV R0,R8
 		MOV R1,R9
 		BEQ move_right
-		B reject_right_2
+		B lose_game
 move_right:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
