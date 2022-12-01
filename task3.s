@@ -1,6 +1,11 @@
 .equ pixel_buffer,0xc8000000
 .equ character_buffer,0xc9000000
 .equ PS2_data, 0xff200100
+
+.equ TIMERLOAD, 0xFFFEC600
+.equ TIMERCOUNTER, 0xFFFEC604
+.equ TIMERCONTROL, 0xFFFEC608
+.equ TIMERINTERUP, 0xFFFEC60C
 input_mazes:// First Obstacle Course
             .word 2,1,0,1,1,1,0,0,0,1,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
@@ -8,9 +13,9 @@ input_mazes:// First Obstacle Course
             .word 0,1,0,1,1,1,0,0,0,1,1,1
             .word 0,1,0,1,1,1,0,0,0,1,1,1
             .word 0,0,0,1,1,1,0,0,0,1,1,1
-            .word 1,1,1,1,1,1,0,0,1,0,0,0
-            .word 1,1,1,1,1,1,0,1,0,0,0,0
-            .word 1,1,1,1,1,1,0,0,0,0,0,3
+            .word 0,1,1,1,1,1,0,0,1,0,0,0
+            .word 0,1,1,1,1,1,0,1,0,0,0,0
+            .word 0,0,0,0,0,0,0,0,0,0,0,3
             // Second Obstacle Course
             .word 2,1,0,1,1,1,0,0,0,0,0,1
             .word 0,1,0,1,1,1,0,0,0,1,0,1
@@ -93,6 +98,13 @@ input_mazes:// First Obstacle Course
             .word 1,0,0,0,0,0,1,0,0,0,0,3
 .global _start
 _start:
+	MOV R0,#0
+	MOV R1,#0
+	MOV R2,#0
+	MOV R3,#0
+	MOV R4,#0
+	MOV R5,#0
+	MOV R6,#0
 	BL VGA_clear_charbuff_ASM
 	BL VGA_fill_ASM
 	BL draw_grid_ASM
@@ -155,7 +167,97 @@ kill_2:
 		BL draw_exit_ASM
 		ADD R1,R1,#6
 		BL VGA_write_char_ASM
-		B end
+		B stopgame
+stopgame:
+		BL VGA_clear_charbuff_ASM
+		BL VGA_fill_ASM
+		mov     r2, #70
+        mov     r1, #5
+        mov     r0, #20
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #21
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #22
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #23
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #24
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #25
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #26
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #27
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #28
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #29
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #30
+        bl      VGA_write_char_ASM
+        mov     r2, #70
+        mov     r1, #5
+        mov     r0, #31
+        bl      VGA_write_char_ASM
+		MOV R5,#1
+start_timer:
+		LDR R1,=20000000
+		MOV R2,#0b001
+		BL ARM_TIM_clear_INT_ASM
+		BL ARM_TIM_config_ASM
+loop:
+		BL ARM_TIM_read_INT_ASM
+		CMP R2,#1
+		BEQ increment_mili
+		B loop
+increment_mili:
+		ADD R5,R5,#1
+		CMP R5,#30
+		BEQ _start
+		B start_timer
+		
+ARM_TIM_read_INT_ASM:
+	LDR R2,=TIMERINTERUP
+	LDR R2,[R2] 
+	BX LR
+		
+ARM_TIM_clear_INT_ASM:
+	PUSH {R2-R3}
+	MOV R2,#0x00000001
+	LDR R3,=TIMERINTERUP
+	STR R2,[R3]
+	POP {R2-R3}
+	BX LR 
+		
+ARM_TIM_config_ASM:
+	PUSH {R3-R4}
+	LDR R3,=TIMERLOAD
+	STR R1,[R3]
+	LDR R4,=TIMERCONTROL
+	STR R2,[R4]
+	POP {R3-R4}
+	BX LR
+	
 mov1:
 		ADD R1,R1,#6
 		MOV R8,R0
@@ -649,7 +751,7 @@ kill:
 		BL draw_exit_ASM
 		ADD R0,R0,#6
 		BL VGA_write_char_ASM
-		B end
+		B stopgame
 mov1_right:
 		ADD R0,R0,#7
 		MOV R8,R0
