@@ -109,25 +109,123 @@ kill_2:
 		B end
 mov1:
 		ADD R1,R1,#6
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject
+reject:
+		SUB R1,R1,#6
+		SUB R5,R5,#1
+		B read_again
 mov2:
 		ADD R1,R1,#7
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject_2
+reject_2:
+		SUB R1,R1,#7
+		SUB R5,R5,#1
+		B read_again
 mov3:
 		ADD R1,R1,#6
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject_3
+reject_3:
+		SUB R1,R1,#6
+		SUB R5,R5,#1
+		B read_again
 mov4:
 		ADD R1,R1,#7
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject_4
+reject_4:
+		SUB R1,R1,#7
+		SUB R5,R5,#1
+		B read_again
 mov5:
 		ADD R1,R1,#6
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject_5
+reject_5:
+		SUB R1,R1,#6
+		SUB R5,R5,#1
+		B read_again
 mov6:
 		ADD R1,R1,#7
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject_6
+reject_6:
+		SUB R1,R1,#7
+		SUB R5,R5,#1
+		B read_again
 mov7:
 		ADD R1,R1,#6
-		B move
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move
+		B reject_7
+reject_7:
+		SUB R1,R1,#6
+		SUB R5,R5,#1
+		B read_again
 move:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -154,25 +252,123 @@ MOVE_UP:
 		
 mov1_up:
 		SUB R1,R1,#6
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_1
+reject_up_1:
+		ADD R1,R1,#6
+		ADD R5,R5,#1
+		B read_again
 mov2_up:
 		SUB R1,R1,#7
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_2
+reject_up_2:
+		ADD R1,R1,#7
+		ADD R5,R5,#1
+		B read_again
 mov3_up:
 		SUB R1,R1,#6
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_3
+reject_up_3:
+		ADD R1,R1,#6
+		ADD R5,R5,#1
+		B read_again
 mov4_up:
 		SUB R1,R1,#7
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_4
+reject_up_4:
+		ADD R1,R1,#7
+		ADD R5,R5,#1
+		B read_again
 mov5_up:
 		SUB R1,R1,#6
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_5
+reject_up_5:
+		ADD R1,R1,#6
+		ADD R5,R5,#1
+		B read_again
 mov6_up:
 		SUB R1,R1,#7
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_6
+reject_up_6:
+		ADD R1,R1,#7
+		ADD R5,R5,#1
+		B read_again
 mov7_up:
 		SUB R1,R1,#6
-		B move_up
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_up
+		B reject_up_7
+reject_up_7:
+		ADD R1,R1,#6
+		ADD R5,R5,#1
+		B read_again
 move_up:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -205,34 +401,166 @@ MOVE_LEFT:
 		
 mov1_left:
 		SUB R0,R0,#6
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_1
+reject_left_1:
+		ADD R0,R0,#6
+		ADD R6,R6,#1
+		B read_again
 mov2_left:
 		SUB R0,R0,#7
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_2
+reject_left_2:
+		ADD R0,R0,#7
+		ADD R6,R6,#1
+		B read_again
 mov3_left:
 		SUB R0,R0,#6
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_3
+reject_left_3:
+		ADD R0,R0,#6
+		ADD R6,R6,#1
+		B read_again
 mov4_left:
 		SUB R0,R0,#7
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_4
+reject_left_4:
+		ADD R0,R0,#7
+		ADD R6,R6,#1
+		B read_again
 mov5_left:
 		SUB R0,R0,#6
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_5
+reject_left_5:
+		ADD R0,R0,#6
+		ADD R6,R6,#1
+		B read_again
 mov6_left:
 		SUB R0,R0,#7
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_6
+reject_left_6:
+		ADD R0,R0,#7
+		ADD R6,R6,#1
+		B read_again
 mov7_left:
 		SUB R0,R0,#6
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_7
+reject_left_7:
+		ADD R0,R0,#6
+		ADD R6,R6,#1
+		B read_again
 mov8_left:
 		SUB R0,R0,#7
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_8
+reject_left_8:
+		ADD R0,R0,#7
+		ADD R6,R6,#1
+		B read_again
 mov9_left:
 		SUB R0,R0,#6
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_7
 mov10_left:
 		SUB R0,R0,#7
-		B move_left
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_left
+		B reject_left_8
 move_left:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -275,34 +603,142 @@ kill:
 		B end
 mov1_right:
 		ADD R0,R0,#7
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_1
+reject_right_1:
+		SUB R0,R0,#7
+		SUB R6,R6,#1
+		B read_again
 mov2_right:
 		ADD R0,R0,#6
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_2
+reject_right_2:
+		SUB R0,R0,#6
+		SUB R6,R6,#1
+		B read_again
 mov3_right:
 		ADD R0,R0,#7
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_1
 mov4_right:
 		ADD R0,R0,#6
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_2
 mov5_right:
 		ADD R0,R0,#7
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_1
 mov6_right:
 		ADD R0,R0,#6
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_2
 mov7_right:
 		ADD R0,R0,#7
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_1
 mov8_right:
 		ADD R0,R0,#6
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_2
 mov9_right:
 		ADD R0,R0,#7
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_1
 mov10_right:
 		ADD R0,R0,#6
-		B move_right
+		MOV R8,R0
+		MOV R9,R1
+		LSL R0,R0,#2
+		LSL R1,R1,#2
+		LDR R7,=#0xffff
+		BL get_pixel 
+		TST R3,R7
+		MOV R0,R8
+		MOV R1,R9
+		BEQ move_right
+		B reject_right_2
 move_right:
 		BL VGA_clear_charbuff_ASM
 		BL draw_exit_ASM
@@ -570,14 +1006,15 @@ VGA_draw_point_ASM:
 		BX LR
 
 get_pixel:
-		MOV R3,#0
 		push {r4-r9,lr}
 		LDR R7,=pixel_buffer
 		LSL R4,R0,#1 //(x << 1)
 		LSL R5,R1,#10 //(y << 10)
 		ADD R8,R4,R5 // (y << 10) | (x << 1)
 		ADD R3,R8,R7 //0xc8000000 | (y << 10) | (x << 1)
+		LDRH R3,[R3]
 		pop {r4-r9,lr}
+		BX LR
 		
 VGA_fill_ASM:
 		push {r2,lr}
