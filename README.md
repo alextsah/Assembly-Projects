@@ -64,3 +64,4 @@ STR Rm, <EA> // Mem[EA] <- Rm
 STR R1, x // x <- R1 
 STR R4, [R1, R0, LSL#2] // Mem[R1+R0<<2] <- R4
 ```
+## End of Guide
